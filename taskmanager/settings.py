@@ -60,6 +60,15 @@ def _env_bool(value, default=False):
     return str(value).strip().lower() in ("1", "true", "yes", "on")
 
 
+def _env_int(value, default):
+    if value is None:
+        return default
+    try:
+        return int(str(value).strip())
+    except ValueError:
+        return default
+
+
 _load_env_file(BASE_DIR / ".env")
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -311,7 +320,7 @@ EMAIL_BACKEND = os.environ.get(
     "EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend"
 )
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
-EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_PORT = _env_int(os.environ.get("EMAIL_PORT"), 587)
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = _env_bool(os.environ.get("EMAIL_USE_TLS"), default=False)
