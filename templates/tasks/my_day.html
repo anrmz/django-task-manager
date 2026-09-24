@@ -1,0 +1,95 @@
+﻿{% extends "base.html" %}
+{% load task_extras %}
+{% block title %}My Day · Task Manager{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div class="title-block">
+        <h1 class="page-title">{{ greeting }}</h1>
+        <p class="page-sub">{{ today|date:"l, F j" }}</p>
+    </div>
+    <div class="page-head-actions">
+        <button type="button" class="btn btn-primary js-quick-add-open" data-quick-add-due="today">
+            {% icon 'plus' %}<span>Add task</span>
+        </button>
+    </div>
+</div>
+
+{% if overdue or due_today or done_today %}
+
+<div class="progress-card">
+    <div class="progress-label">
+        <strong>{{ progress_done }} done</strong> of {{ progress_total }} on your plate today
+    </div>
+    <div class="progress" style="--pct: {{ progress_pct }}%"><span></span></div>
+</div>
+
+{% if overdue %}
+<div class="list-section">
+    <div class="list-section__head">
+        <h2>Overdue</h2><span class="count">{{ overdue|length }}</span>
+    </div>
+    <div class="task-list">
+        {% for task in overdue %}
+        {% include "components/task_item.html" %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if due_today %}
+<div class="list-section">
+    <div class="list-section__head">
+        <h2>Due today</h2><span class="count">{{ due_today|length }}</span>
+    </div>
+    <div class="task-list">
+        {% for task in due_today %}
+        {% include "components/task_item.html" %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if next_up %}
+<div class="list-section">
+    <div class="list-section__head">
+        <h2>Next up</h2><span class="count">{{ next_up|length }} tomorrow</span>
+    </div>
+    <div class="task-list">
+        {% for task in next_up %}
+        {% include "components/task_item.html" %}
+        {% endfor %}
+    </div>
+    {% if later_week_count %}
+    <p class="page-sub mt-8" style="font-size:12.5px;">
+        {{ later_week_count }} more due in the next 7 days &middot;
+        <a href="{% url 'upcoming' %}" style="color: var(--primary); font-weight: 600;">See upcoming</a>
+    </p>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if done_today %}
+<div class="list-section">
+    <div class="list-section__head">
+        <h2>Completed today</h2><span class="count">{{ done_today|length }}</span>
+    </div>
+    <div class="task-list">
+        {% for task in done_today|slice:":10" %}
+        {% include "components/task_item.html" %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">{% icon 'sun' size="22" %}</span>
+    <h2>Anything goes today</h2>
+    <p>Tasks due today, overdue tasks, and what you finish will show up here.</p>
+    <button type="button" class="btn btn-primary js-quick-add-open" data-quick-add-due="today">
+        {% icon 'plus' %}<span>Add your first task</span>
+    </button>
+</div>
+{% endif %}
+{% endblock %}

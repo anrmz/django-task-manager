@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load task_extras %}
+{% block title %}Inbox · Task Manager{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div class="title-block">
+        <h1 class="page-title">Inbox</h1>
+        <p class="page-sub">Captured but not organised yet &mdash; no project, no date.</p>
+    </div>
+    <div class="page-head-actions">
+        <button type="button" class="btn btn-primary js-quick-add-open">
+            {% icon 'plus' %}<span>Add task</span>
+        </button>
+    </div>
+</div>
+
+{% if tasks %}
+<div class="task-list" data-task-list>
+    {% for task in tasks %}
+    {% include "components/task_item.html" %}
+    {% endfor %}
+</div>
+<p class="page-sub mt-8" style="font-size:12.5px;">
+    Tip: give an inbox task a project or a due date to move it into My Day or Upcoming.
+</p>
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">{% icon 'inbox' size="22" %}</span>
+    <h2>Inbox zero</h2>
+    <p>Quick captures land here until you give them a project or a due date.</p>
+    <button type="button" class="btn btn-primary js-quick-add-open">
+        {% icon 'plus' %}<span>Capture a task</span>
+    </button>
+</div>
+{% endif %}
+{% endblock %}

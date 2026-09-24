@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load task_extras %}
+{% block title %}All Tasks · Task Manager{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div class="title-block">
+        <h1 class="page-title">All Tasks</h1>
+        <p class="page-sub">The full database &mdash; search, filter, sort.</p>
+    </div>
+    <div class="page-head-actions">
+        <a href="{% url 'task_create' %}" class="btn btn-ghost">
+            {% icon 'pencil' %}<span>Full form</span>
+        </a>
+        <button type="button" class="btn btn-primary js-quick-add-open">
+            {% icon 'plus' %}<span>Add task</span>
+        </button>
+    </div>
+</div>
+
+<form method="get" class="toolbar" data-filter-form>
+    <div class="field grow">
+        <label class="visually-hidden" for="q">Search tasks</label>
+        <input type="search" id="q" name="q" class="field__control" value="{{ query }}"
+               placeholder="Search title, notes, project, tag&hellip;" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="field">
+        <label for="f-status">Status</label>
+        <select id="f-status" name="status" class="field__control">
+            <option value="">All statuses</option>
+            {% for value, label in statuses %}
+            <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="field">
+        <label for="f-priority">Priority</label>
+        <select id="f-priority" name="priority" class="field__control">
+            <option value="">Any priority</option>
+            {% for value, label in priorities %}
+            <option value="{{ value }}" {% if current_priority == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="field">
+        <label for="f-project">Project</label>
+        <select id="f-project" name="project" class="field__control">
+            <option value="">Any project</option>
+            {% for project in projects %}
+            <option value="{{ project.pk }}" {% if current_project == project.pk|stringformat:"s" %}selected{% endif %}>{{ project.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="field">
+        <label for="f-tag">Tag</label>
+        <select id="f-tag" name="tag" class="field__control">
+            <option value="">Any tag</option>
+            {% for tag_name in tag_options %}
+            <option value="{{ tag_name }}" {% if current_tag == tag_name %}selected{% endif %}>#{{ tag_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <label class="toolbar-check" title="Only pending tasks past their due date">
+        <input type="checkbox" name="overdue" value="1" {% if current_overdue %}checked{% endif %}>
+        Overdue
+    </label>
+
+    <div class="sort-tabs" aria-label="Sort">
+        <a href="?sort=due{% if preserved_qs %}&amp;{{ preserved_qs }}{% endif %}" class="{% if sort == 'due' %}active{% endif %}">Due</a>
+        <a href="?sort=priority{% if preserved_qs %}&amp;{{ preserved_qs }}{% endif %}" class="{% if sort == 'priority' %}active{% endif %}">Priority</a>
+        <a href="?sort=created{% if preserved_qs %}&amp;{{ preserved_qs }}{% endif %}" class="{% if sort == 'created' %}active{% endif %}">Newest</a>
+        <a href="?sort=updated{% if preserved_qs %}&amp;{{ preserved_qs }}{% endif %}" class="{% if sort == 'updated' %}active{% endif %}">Updated</a>
+    </div>
+</form>
+
+<p class="small faint" style="margin-bottom:10px;">
+    {{ paginator.count }} task{{ paginator.count|pluralize }}
+    {% if query %}matching &ldquo;{{ query }}&rdquo;{% endif %}
+    {% if current_status or current_priority or current_project or current_tag or current_overdue %}&middot; filtered{% endif %}
+</p>
+
+{% if tasks %}
+<div class="task-list" data-task-list>
+    {% for task in tasks %}
+    {% include "components/task_item.html" with compact=True %}
+    {% endfor %}
+</div>
+
+{% if paginator.num_pages > 1 %}
+<nav class="pagination" aria-label="Pages">
+    {% if page_obj.has_previous %}
+    <a class="btn btn-ghost btn-sm" href="?page={{ page_obj.previous_page_number }}&amp;sort={{ sort }}{% if preserved_qs %}&amp;{{ preserved_qs }}{% endif %}">
+        {% icon 'chevron-left' %} Previous
+    </a>
+    {% else %}<span></span>{% endif %}
+    <span class="meta">Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a class="btn btn-ghost btn-sm" href="?page={{ page_obj.next_page_number }}&amp;sort={{ sort }}{% if preserved_qs %}&amp;{{ preserved_qs }}{% endif %}">
+        Next {% icon 'chevron-right' %}
+    </a>
+    {% else %}<span></span>{% endif %}
+</nav>
+{% endif %}
+
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">{% icon 'list' size="22" %}</span>
+    <h2>{{ query|default:"No tasks yet" }}{% if query %} — nothing found{% endif %}</h2>
+    <p>{% if query %}Try different keywords, or clear the filters.{% else %}Your first task is one click away.{% endif %}</p>
+    <div class="page-head-actions" style="justify-content:center; margin-top: 4px;">
+        <button type="button" class="btn btn-primary js-quick-add-open">
+            {% icon 'plus' %}<span>Add a task</span>
+        </button>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

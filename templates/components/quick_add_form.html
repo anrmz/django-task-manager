@@ -1,0 +1,122 @@
+{% load task_extras %}
+<form method="post" action="{% url 'quick_add' %}" class="editor" data-quick-add-form novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+    <div class="editor__head">
+        <span class="editor__eyebrow" data-editor-context>
+            {% icon 'zap' size="14" %}<span>Quick add</span>
+        </span>
+        <button type="button" class="icon-btn editor__close" data-close-quick-add aria-label="Close">
+            {% icon 'x' %}
+        </button>
+    </div>
+
+    <label class="visually-hidden" for="qa-title">Task title</label>
+    <input type="text" id="qa-title" name="title" class="editor__title"
+           placeholder="What needs to be done?"
+           autocomplete="off" spellcheck="false" required autofocus aria-describedby="qa-hint">
+    <div class="field__error hidden" data-qa-error role="alert"></div>
+
+    <div class="editor__chips hidden" data-parse-chips aria-live="polite"></div>
+
+    <div class="editor__row">
+        <div class="editor__ctrl" data-editor-due>
+            <span class="editor__label" id="qa-due-label">Due</span>
+            <div class="editor__seg" role="group" aria-labelledby="qa-due-label">
+                <button type="button" class="editor__seg-item is-active" data-due-quick="none" aria-pressed="true">No date</button>
+                <button type="button" class="editor__seg-item" data-due-quick="today" aria-pressed="false">Today</button>
+                <button type="button" class="editor__seg-item" data-due-quick="tomorrow" aria-pressed="false">Tomorrow</button>
+            </div>
+            <div class="editor__fields">
+                <span class="editor__field-group">
+                    <span class="editor__field-icon">{% icon 'calendar' size="14" %}</span>
+                    <input type="date" id="qa-due" name="due_date" class="editor__field" aria-label="Due date">
+                </span>
+                <span class="editor__field-group">
+                    <span class="editor__field-icon">{% icon 'clock' size="14" %}</span>
+                    <input type="time" id="qa-time" name="due_time" class="editor__field" aria-label="Due time">
+                </span>
+            </div>
+        </div>
+
+        <div class="editor__ctrl">
+            <span class="editor__label" id="qa-priority-label">Priority</span>
+            <div class="editor__seg" role="group" aria-labelledby="qa-priority-label">
+                <button type="button" class="editor__seg-item" data-priority="low" aria-pressed="false">
+                    {% icon 'flag' size="13" %}Low
+                </button>
+                <button type="button" class="editor__seg-item is-active" data-priority="medium" aria-pressed="true">
+                    {% icon 'flag' size="13" %}Medium
+                </button>
+                <button type="button" class="editor__seg-item" data-priority="high" aria-pressed="false">
+                    {% icon 'flag' size="13" %}High
+                </button>
+            </div>
+            <input type="hidden" name="priority" value="medium" data-priority-value>
+        </div>
+    </div>
+
+    <div class="editor__row">
+        <div class="editor__ctrl">
+            <label class="editor__label" for="qa-project">Project</label>
+            <span class="editor__input-wrap">
+                <input type="text" id="qa-project" list="editor-projects" class="editor__field"
+                       placeholder="Pick a project…" autocomplete="off" spellcheck="false" data-project-input>
+                <datalist id="editor-projects">
+                    {% for project in nav.qa_projects %}
+                    <option value="{{ project.name }}" data-value="{{ project.pk }}"></option>
+                    {% endfor %}
+                </datalist>
+                <select name="project" data-project-value class="visually-hidden" aria-label="Project">
+                    <option value="">No project</option>
+                    {% for project in nav.qa_projects %}
+                    <option value="{{ project.pk }}">{{ project.name }}</option>
+                    {% endfor %}
+                </select>
+            </span>
+        </div>
+
+        <div class="editor__ctrl">
+            <label class="editor__label" for="qa-tags">Tags</label>
+            <span class="editor__input-wrap">
+                <input type="text" id="qa-tags" list="editor-tags" class="editor__field"
+                       placeholder="Type and press Enter…" autocomplete="off" spellcheck="false" data-tags-input>
+                <datalist id="editor-tags"></datalist>
+                <input type="hidden" name="tags" data-tags-value>
+            </span>
+            <div class="editor__tag-chips hidden" data-tags-chips></div>
+        </div>
+    </div>
+
+    <div class="editor__more">
+        <button type="button" class="editor__more-toggle" data-more-toggle aria-expanded="false" aria-controls="qa-more-body">
+            {% icon 'chevron-down' size="14" %}<span>More options</span>
+        </button>
+        <div class="editor__more-body hidden" id="qa-more-body" data-more-body>
+            <div class="editor__ctrl">
+                <label class="editor__label" for="qa-desc">Description</label>
+                <textarea id="qa-desc" name="description" class="editor__field editor__field--area" rows="2"
+                          placeholder="Notes, links, context…"></textarea>
+            </div>
+            <div class="editor__ctrl">
+                <label class="editor__label" for="qa-subtasks">Subtasks <span class="editor__opt">optional</span></label>
+                <textarea id="qa-subtasks" name="subtasks" class="editor__field editor__field--area" rows="3"
+                          placeholder="One per line — broken down before you start&#8230;"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="editor__foot">
+        <span class="editor__hint" id="qa-hint">
+            <kbd>Enter</kbd> creates &nbsp;&middot;&nbsp; try
+            <code>tomorrow 5&nbsp;pm</code> or <code>#urgent</code>
+        </span>
+        <div class="btns">
+            <button type="button" class="btn btn-ghost" data-close-quick-add>Cancel</button>
+            <button type="submit" class="btn btn-primary" data-editor-submit>
+                {% icon 'plus' %}<span>Create task</span>
+            </button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,43 @@
+﻿{% extends "base.html" %}
+{% load task_extras %}
+{% block title %}Upcoming · Task Manager{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div class="title-block">
+        <h1 class="page-title">Upcoming</h1>
+        <p class="page-sub">Everything scheduled after today &mdash; none of it overdue.</p>
+    </div>
+    <div class="page-head-actions">
+        <button type="button" class="btn btn-primary js-quick-add-open">
+            {% icon 'plus' %}<span>Add task</span>
+        </button>
+    </div>
+</div>
+
+{% if has_tasks %}
+    {% for group in groups %}
+    {% if group.tasks %}
+    <div class="list-section" data-bucket="{{ group.key }}">
+        <div class="list-section__head">
+            <h2>{{ group.label }}</h2><span class="count">{{ group.sub }} &middot; {{ group.tasks|length }}</span>
+        </div>
+        <div class="task-list" data-task-list>
+            {% for task in group.tasks %}
+            {% include "components/task_item.html" %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">{% icon 'calendar' size="22" %}</span>
+    <h2>Nothing on the calendar</h2>
+    <p>Tasks with a due date after today will appear here, grouped by how soon they are.</p>
+    <button type="button" class="btn btn-primary js-quick-add-open">
+        {% icon 'plus' %}<span>Schedule a task</span>
+    </button>
+</div>
+{% endif %}
+{% endblock %}

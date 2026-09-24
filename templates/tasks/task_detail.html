@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% load static task_extras %}
+{% block title %}{{ task.title }} · Task Manager{% endblock %}
+
+{% block content %}
+<a href="{% url 'all_tasks' %}" class="back-link">{% icon 'arrow-left' size="15" %}All Tasks</a>
+
+<article class="detail mt-8">
+    <div class="detail__head">
+        <form method="post" action="{% url 'task_toggle' task.pk %}" data-task-toggle data-task-pk="{{ task.pk }}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <label class="task__toggle {% if task.status == 'completed' %}is-done{% endif %}" style="width:26px; height:26px; margin-top:4px; cursor:pointer;"
+                   aria-label="Toggle completion">
+                <input type="checkbox" class="task__toggle-input" {% if task.status == 'completed' %}checked{% endif %}>
+                <span class="task__check" aria-hidden="true">{% icon 'check' size="15" %}</span>
+            </label>
+        </form>
+
+        <div style="flex:1; min-width:0;">
+            <h1 class="detail__title {% if task.status == 'completed' %}is-completed-title{% endif %}">{{ task.title }}</h1>
+            {% if task.status == 'completed' and task.completed_at %}
+            <p class="small muted mt-8">Completed {{ task.completed_at|date:"M j, Y · g:i a" }}</p>
+            {% endif %}
+        </div>
+
+        <div class="btns">
+            <a href="{% url 'task_edit' task.pk %}" class="btn btn-soft btn-sm">
+                {% icon 'pencil' %}<span>Edit</span>
+            </a>
+            <a href="{% url 'task_delete' task.pk %}" class="btn btn-danger-soft btn-sm">
+                {% icon 'trash' %}<span>Delete</span>
+            </a>
+        </div>
+    </div>
+
+    <ul class="detail__meta">
+        <li>
+            <dt>{% icon 'circle' %}Status</dt>
+            <dd>{{ task.get_status_display }}</dd>
+        </li>
+        {% if task.project %}
+        <li>
+            <dt>{% icon 'folder' %}Project</dt>
+            <dd style="display:flex; align-items:center; gap:6px;">
+                <span class="dot" style="width:8px; height:8px; background: {{ task.project.color }};"></span>
+                <a href="{% url 'project_detail' task.project.pk %}">{{ task.project.name }}</a>
+            </dd>
+        </li>
+        {% endif %}
+        <li>
+            <dt>{% icon 'calendar' %}Due</dt>
+            <dd data-inline-field="due_date">
+                <input type="date" class="inline-field {% if task.is_overdue %}is-overdue{% endif %}"
+                       value="{% if task.due_date %}{{ task.due_date|date:'Y-m-d' }}{% endif %}"
+                       aria-label="Due date (edit inline)">
+            </dd>
+        </li>
+        <li>
+            <dt>{% icon 'clock' %}Due time</dt>
+            <dd data-inline-field="due_time">
+                <input type="time" class="inline-field"
+                       value="{% if task.due_time %}{{ task.due_time|date:'H:i' }}{% endif %}"
+                       aria-label="Due time (edit inline)">
+            </dd>
+        </li>
+        <li>
+            <dt>{% icon 'flag' %}Priority</dt>
+            <dd data-inline-field="priority">
+                <select class="field__control field__control--select inline-field inline-field--select"
+                        aria-label="Priority (edit inline)">
+                    <option value="high" {% if task.priority == 'high' %}selected{% endif %}>High</option>
+                    <option value="medium" {% if task.priority == 'medium' %}selected{% endif %}>Medium</option>
+                    <option value="low" {% if task.priority == 'low' %}selected{% endif %}>Low</option>
+                </select>
+            </dd>
+        </li>
+        <li>
+            <dt>{% icon 'clock' %}Created</dt>
+            <dd>{{ task.created_at|date:"M j, Y" }}</dd>
+        </li>
+    </ul>
+
+    {% if task.tags.all %}
+    <div class="btns">
+        {% for tag in task.tags.all %}
+        <a class="chip chip--tag" href="{% url 'all_tasks' %}?tag={{ tag.name|urlencode }}">#{{ tag.name }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="detail__desc {% if not task.description %}is-empty{% endif %}">
+        {{ task.description|default:"No notes." }}
+    </div>
+
+    <section class="detail-section" data-subtask-section>
+        <div class="detail-section__head">
+            <h2 class="detail-section__title">
+                {% icon 'layers' size="16" %}Subtasks
+                <span class="chip chip--subtask" data-subtask-progress>{{ sub_done }}/{{ sub_total }}</span>
+            </h2>
+        </div>
+        <div class="subtask__progress" data-subtask-progressbar>
+            <span class="subtask__progress-fill" style="width: {% if sub_total %}{% widthratio sub_done sub_total 100 %}{% else %}0{% endif %}%"></span>
+        </div>
+        <ul class="subtask-list" data-subtask-list>
+            {% for subtask in subtasks %}
+            {% include "components/subtask_item.html" %}
+            {% endfor %}
+        </ul>
+        {% if not subtasks %}
+        <p class="subtask-empty">Break this task into small pieces — each one gets its own checkbox.</p>
+        {% endif %}
+        <form method="post" action="{% url 'subtask_add' task.pk %}" class="subtask-add" data-subtask-add>
+            {% csrf_token %}
+            <label class="visually-hidden" for="subtask-title">New subtask</label>
+            <input type="text" id="subtask-title" name="title" class="field__control"
+                   placeholder="Add a subtask…" autocomplete="off" spellcheck="false" maxlength="200">
+            <button type="submit" class="btn btn-primary btn-sm">
+                {% icon 'plus' %}<span>Add</span>
+            </button>
+        </form>
+    </section>
+
+    <section class="detail-section" data-activity-section>
+        <div class="detail-section__head">
+            <h2 class="detail-section__title">
+                {% icon 'history' size="16" %}Activity
+            </h2>
+        </div>
+        {% if events %}
+        <ol class="timeline">
+            {% for event in events %}
+            <li class="timeline__item">
+                <span class="timeline__icon">{% icon event.verb|event_icon size="14" %}</span>
+                <div class="timeline__body">
+                    <span class="timeline__line">{{ event|event_line }}</span>
+                    <span class="timeline__time">{{ event.created_at|date:"M j, g:i a" }}</span>
+                </div>
+            </li>
+            {% endfor %}
+        </ol>
+        {% else %}
+        <p class="timeline-empty muted small">Nothing yet — history shows up here as you work on this task.</p>
+        {% endif %}
+    </section>
+</article>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/detail.js' %}"></script>
+{% endblock %}

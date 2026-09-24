@@ -1,0 +1,70 @@
+{% load task_extras %}
+<header class="app-header">
+    <button type="button" class="icon-btn hamburger" data-drawer-open aria-label="Open menu">
+        {% icon 'menu' %}
+    </button>
+
+    <a href="{% url 'my_day' %}" class="header-brand" aria-label="Task Manager · My Day">
+        <span class="brand-mark" aria-hidden="true">{% icon 'logo' %}</span>
+        <span class="brand-name">Task Manager</span>
+    </a>
+
+    <button type="button" class="header-search js-palette-open"
+            aria-label="Search tasks, projects and tags">
+        {% icon 'search' %}
+        <span class="placeholder">Search&hellip;</span>
+        <kbd>Ctrl&nbsp;K</kbd>
+    </button>
+
+    <span class="header-spacer"></span>
+
+    <div class="header-actions">
+        <button type="button" class="btn btn-primary js-quick-add-open">
+            {% icon 'plus' %}
+            <span>Add task</span>
+        </button>
+
+        <button type="button" class="icon-btn js-palette-open header-search-icon" aria-label="Search">
+            {% icon 'search' %}
+        </button>
+
+        <div class="dropdown js-dropdown" id="themeMenu">
+            <button type="button" class="icon-btn js-dropdown-btn" aria-label="Appearance" aria-haspopup="menu">
+                {% icon 'appearance' %}
+            </button>
+            <div class="dropdown-panel hidden js-dropdown-menu" role="menu" aria-label="Appearance">
+                <p class="dropdown-head">Appearance</p>
+                <button type="button" class="dropdown-item js-theme-choice" data-theme-pref="light" role="menuitemradio" aria-checked="false">
+                    {% icon 'sun' %} <span>Light</span>
+                </button>
+                <button type="button" class="dropdown-item js-theme-choice" data-theme-pref="dark" role="menuitemradio" aria-checked="false">
+                    {% icon 'moon' %} <span>Dark</span>
+                </button>
+                <button type="button" class="dropdown-item js-theme-choice" data-theme-pref="system" role="menuitemradio" aria-checked="false">
+                    {% icon 'appearance' %} <span>System</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="dropdown js-dropdown" id="userMenu">
+            <button type="button" class="icon-btn js-dropdown-btn"
+                    style="padding:0; border-radius:50%; width:32px; height:32px;"
+                    aria-label="Account menu" aria-haspopup="menu">
+                <span class="avatar" aria-hidden="true">{{ user.username|first|upper }}</span>
+            </button>
+            <div class="dropdown-panel hidden js-dropdown-menu" role="menu" aria-label="Account">
+                <p class="dropdown-head">{{ user.username }}</p>
+                <a href="{% url 'settings' %}" class="dropdown-item" role="menuitem">
+                    {% icon 'settings' %} <span>Settings</span>
+                </a>
+                <div class="dropdown-sep"></div>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item" role="menuitem">
+                        {% icon 'logout' %} <span>Log out</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</header>

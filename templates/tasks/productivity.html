@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load task_extras %}
+{% block title %}Productivity · Task Manager{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div class="title-block">
+        <h1 class="page-title">Productivity</h1>
+        <p class="page-sub">Real numbers from your completed tasks — nothing is estimated.</p>
+    </div>
+    <div class="page-head-actions">
+        {% if streak %}
+        <span class="streak-chip">{% icon 'trophy' size="14" %}{{ streak }}-day streak</span>
+        {% endif %}
+        <button type="button" class="btn btn-primary js-quick-add-open">
+            {% icon 'plus' %}<span>Add task</span>
+        </button>
+    </div>
+</div>
+
+<div class="kpi-card">
+    <div class="kpi-card__value">{{ completion_rate }}%</div>
+    <div class="kpi-card__label">Overall completion rate</div>
+    <div class="kpi-card__sub">Every task you have ever created, completed or not.</div>
+</div>
+
+<div class="stats-grid mt-16">
+    <div class="stat-card">
+        <span class="stat-card__label">{% icon 'zap' %}Completed today</span>
+        <span class="stat-card__value">{{ completed_today }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-card__label">{% icon 'calendar' %}Completed this week</span>
+        <span class="stat-card__value">{{ completed_week }}</span>
+        <span class="stat-card__sub">{{ week_label }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-card__label">{% icon 'target' %}Completed this month</span>
+        <span class="stat-card__value">{{ completed_month }}</span>
+        <span class="stat-card__sub">{{ today|date:"F Y" }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-card__label">{% icon 'circle' %}Open tasks</span>
+        <span class="stat-card__value">{{ pending }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-card__label">{% icon 'alert' %}Overdue</span>
+        <span class="stat-card__value" {% if overdue %}style="color: var(--danger);"{% endif %}>{{ overdue }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-card__label">{% icon 'plus' %}Created this month</span>
+        <span class="stat-card__value">{{ created_month }}</span>
+    </div>
+</div>
+
+<div class="insight-row">
+    <section class="dash-card trend-card span-8" aria-label="Weekly trend">
+        <div class="dash-card__head">
+            <h2>Tasks completed</h2>
+            <span class="small faint">{{ week_label }}</span>
+        </div>
+        <div class="trend-bars" style="margin-top: 6px;">
+            {% for day in trend %}
+            <div class="trend-col">
+                {% if day.count %}
+                <div class="trend-col__value">{{ day.count }}</div>
+                <div class="trend-col__track">
+                    <div class="trend-col__bar" style="height: {% widthratio day.count peak 100 %}%;" title="{{ day.label }}: {{ day.count }}"></div>
+                </div>
+                {% else %}
+                <div class="trend-col__value">&nbsp;</div>
+                <div class="trend-col__track"></div>
+                {% endif %}
+                <div class="trend-col__day">{{ day.label }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="dash-card span-4" aria-label="Streak">
+        <div class="dash-card__head"><h2>Day streak</h2></div>
+        <div class="dash-card__body">
+            <div class="kpi-card__value" style="font-size:34px;">{{ streak }}</div>
+            <p class="small muted" style="margin-top:6px;">
+                Consecutive days with at least one completed task. Miss a day and it starts over.
+            </p>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load task_extras %}
+{% block title %}Tags · Task Manager{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div class="title-block">
+        <h1 class="page-title">Tags</h1>
+        <p class="page-sub">Free-form labels, applied from the task form.</p>
+    </div>
+</div>
+
+{% if tags %}
+<div class="tag-list">
+    {% for tag in tags %}
+    <a class="tag-row" href="{% url 'all_tasks' %}?tag={{ tag.name|urlencode }}">
+        <span class="tag-name">{% icon 'tag' %}#{{ tag.name }}</span>
+        <span class="tag-count">{{ tag.open_count }} open &middot; {{ tag.total_count }} total</span>
+        {% icon 'chevron-right' size="15" %}
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">{% icon 'tag' size="22" %}</span>
+    <h2>No tags yet</h2>
+    <p>Type #keywords when creating a task — they collect here and can be filtered in All Tasks.</p>
+    <button type="button" class="btn btn-primary js-quick-add-open">
+        {% icon 'plus' %}<span>Add a task with tags</span>
+    </button>
+</div>
+{% endif %}
+{% endblock %}

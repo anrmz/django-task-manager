@@ -1,0 +1,268 @@
+/* ==========================================================================
+   Task Manager · Insights — stat cards, KPIs, weekly trend, progress
+   ========================================================================== */
+
+/* DashboardCard — shared layout primitive; plain by default */
+.dash-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+.dash-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 20px;
+}
+.dash-card__head h2 {
+    font-size: 14px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+}
+.dash-card__body {
+    padding: 4px 20px 20px;
+}
+
+/* StatCard — simple single value */
+.stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 18px 20px;
+}
+.stat-card__label {
+    font-size: 12.5px;
+    font-weight: 550;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.stat-card__label .icon {
+    width: 15px;
+    height: 15px;
+    color: var(--faint);
+}
+.stat-card__value {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+.stat-card__sub {
+    font-size: 12px;
+    color: var(--faint);
+}
+
+/* MetricCard — value plus honest context */
+.metric-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px 20px;
+}
+.metric-card__title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+}
+.metric-card__value {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+}
+.metric-card__title,
+.metric-card__value {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+/* KpiCard — the one headline productivity number */
+.kpi-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 22px 20px;
+    background: linear-gradient(180deg, var(--primary-soft), transparent 130%);
+}
+.kpi-card__value {
+    font-size: 40px;
+    font-weight: 750;
+    letter-spacing: -0.03em;
+    color: var(--primary);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+.kpi-card__label {
+    font-size: 13px;
+    font-weight: 550;
+    color: var(--muted);
+}
+.kpi-card__sub {
+    font-size: 12px;
+    color: var(--faint);
+}
+
+/* Tone helpers (used sparingly) */
+.tone-danger .metric-card__value {
+    color: var(--danger);
+}
+.tone-success .metric-card__value {
+    color: var(--success);
+}
+.tone-warning .metric-card__value {
+    color: var(--warning);
+}
+
+/* ---- Weekly trend ------------------------------------------------------ */
+
+.trend-card {
+    padding: 8px 20px 20px;
+}
+.trend-bars {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    align-items: end;
+    height: 132px;
+    margin-top: 12px;
+}
+.trend-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: stretch;
+    height: 100%;
+    gap: 5px;
+}
+.trend-col__track {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    border-radius: 4px;
+    background: var(--surface-2);
+    overflow: hidden;
+}
+.trend-col__bar {
+    width: 100%;
+    border-radius: 4px;
+    background: var(--primary-soft);
+    transition: height 300ms var(--ease), background var(--t-fast);
+}
+.trend-col:hover .trend-col__bar {
+    background: var(--primary);
+}
+.trend-col__value {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    min-height: 15px;
+}
+.trend-col__day {
+    font-size: 11px;
+    color: var(--faint);
+    text-align: center;
+}
+
+/* ---- Progress ---------------------------------------------------------- */
+
+.progress {
+    --pct: 0;
+    height: 6px;
+    border-radius: 99px;
+    background: var(--surface-3);
+    overflow: hidden;
+    position: relative;
+}
+.progress > span {
+    display: block;
+    height: 100%;
+    width: var(--pct);
+    border-radius: inherit;
+    background: var(--primary);
+    transition: width 320ms var(--ease);
+}
+.progress--success > span {
+    background: var(--success);
+}
+
+.progress-label {
+    font-size: 12.5px;
+    color: var(--muted);
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+.progress-label strong {
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Streak chip */
+.streak-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    background: var(--warning-soft);
+    color: var(--warning);
+    font-size: 12.5px;
+    font-weight: 650;
+}
+.streak-chip .icon {
+    width: 14px;
+    height: 14px;
+}
+
+/* My Day progress summary */
+.progress-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    margin-bottom: 6px;
+}
+.progress-card .progress {
+    margin-top: 10px;
+}
+
+/* ---- Productivity page layout ------------------------------------------ */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 16px;
+}
+.stats-grid > * {
+    grid-column: span 2;
+}
+.stats-grid > .span-3 {
+    grid-column: span 3;
+}
+.stats-grid > .span-6 {
+    grid-column: span 6;
+}
+
+.insight-row {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+.insight-row > .span-8 {
+    grid-column: span 8;
+}
+.insight-row > .span-4 {
+    grid-column: span 4;
+}

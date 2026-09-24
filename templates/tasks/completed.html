@@ -1,0 +1,29 @@
+﻿{% extends "base.html" %}
+{% load task_extras %}
+{% block title %}Completed · Task Manager{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div class="title-block">
+        <h1 class="page-title">Completed</h1>
+        <p class="page-sub">Your archive — newest first.</p>
+    </div>
+</div>
+
+{% if tasks %}
+<div class="task-list">
+    {% for task in tasks %}
+    {% include "components/task_item.html" %}
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">{% icon 'check-circle' size="22" %}</span>
+    <h2>Nothing completed yet</h2>
+    <p>Tick something off and it will land here, with the moment you finished it.</p>
+    <button type="button" class="btn btn-primary js-quick-add-open">
+        {% icon 'plus' %}<span>Add a task</span>
+    </button>
+</div>
+{% endif %}
+{% endblock %}

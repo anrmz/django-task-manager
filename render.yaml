@@ -1,0 +1,59 @@
+# Render Blueprint for the Task Manager app (OPTIONAL).
+#
+# This is only used if you create a Render service with "New Blueprint" and
+# point it at this repository. All secrets are generated/managed by Render
+# (SECRET_KEY) or entered in the Render dashboard (EMAIL_HOST_PASSWORD) — no
+# real credentials appear in this file. Adjust the ALLOWED_HOSTS /
+# CSRF_TRUSTED_ORIGINS values below to the service URL Render gives you.
+#
+# You can also skip this file and deploy a plain "Web Service" instead:
+#   Build Command: ./build.sh
+#   Start Command: gunicorn taskmanager.wsgi:application --access-logfile -
+#   Environment:   same variables as listed below.
+
+services:
+  - type: web
+    name: django-task-manager
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn taskmanager.wsgi:application --access-logfile -"
+    healthCheckPath: /
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "django-task-manager.onrender.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://django-task-manager.onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: django-task-manager-db
+          property: connectionString
+      # Email. Fill these in before relying on password-reset emails.
+      # Leave EMAIL_HOST_PASSWORD to be entered in the Render dashboard
+      # (do not paste it into this file).
+      - key: EMAIL_BACKEND
+        value: "django.core.mail.backends.smtp.EmailBackend"
+      - key: EMAIL_HOST
+        value: "smtp.example.com"
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_HOST_USER
+        value: "app@example.com"
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: EMAIL_USE_TLS
+        value: "True"
+      - key: EMAIL_USE_SSL
+        value: "False"
+      - key: DEFAULT_FROM_EMAIL
+        value: "Task Manager <app@example.com>"
+
+databases:
+  - name: django-task-manager-db
+    plan: free
+    databaseName: taskmanager
+    user: taskmanager

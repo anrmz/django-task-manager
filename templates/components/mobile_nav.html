@@ -1,0 +1,27 @@
+{% load task_extras %}
+<nav class="mobile-nav" aria-label="Primary">
+    <div class="mobile-nav-inner">
+        <a href="{% url 'my_day' %}" class="mobile-tab {% if nav.page == 'my_day' %}active{% endif %}" aria-label="My Day">
+            {% icon 'sun' %}
+            <span>My Day</span>
+            <span class="badge-dot" data-nav-count="overdue" {% if not nav.overdue_count %}hidden{% endif %}>{{ nav.overdue_count }}</span>
+        </a>
+        <a href="{% url 'inbox' %}" class="mobile-tab {% if nav.page == 'inbox' %}active{% endif %}" aria-label="Inbox">
+            {% icon 'inbox' %}
+            <span>Inbox</span>
+            <span class="badge-dot" data-nav-count="inbox" {% if not nav.inbox_count %}hidden{% endif %}>{{ nav.inbox_count }}</span>
+        </a>
+        <a href="{% url 'upcoming' %}" class="mobile-tab {% if nav.page == 'upcoming' %}active{% endif %}" aria-label="Upcoming">
+            {% icon 'calendar' %}
+            <span>Upcoming</span>
+        </a>
+        <a href="{% url 'all_tasks' %}" class="mobile-tab {% if nav.page == 'all_tasks' %}active{% endif %}" aria-label="All Tasks">
+            {% icon 'list' %}
+            <span>Tasks</span>
+        </a>
+        <span class="mobile-tab mobile-tab--add">
+            <button type="button" class="mobile-tab__dot js-quick-add-open" aria-label="Add task">{% icon 'plus' size="22" %}</button>
+        </span>
+    </div>
+</nav>
+<div class="drawer-scrim" data-drawer-close hidden></div>

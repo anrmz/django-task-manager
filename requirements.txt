@@ -1,0 +1,19 @@
+# Production + development dependencies for the Task Manager app.
+# Versions are pinned for reproducible builds. You can relax a pin if a newer
+# patch is required by your platform, but keep Django in the 6.x line,
+# psycopg in the 3.x line and Python in the 3.13 line.
+
+Django==6.1.1
+
+# PostgreSQL driver + DATABASE_URL parsing (production database).
+psycopg[binary]==3.2.3
+dj-database-url==2.3.0
+
+# Production WSGI server.
+gunicorn==23.0.0
+
+# Static file serving without a separate web server.
+whitenoise==6.8.2
+
+# Timezone database required on Windows (USE_TZ=True); harmless on Linux.
+tzdata==2026.4

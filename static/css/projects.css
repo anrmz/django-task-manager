@@ -1,0 +1,204 @@
+/* ==========================================================================
+   Task Manager · Projects & tags
+   ========================================================================== */
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.project-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: border-color var(--t-fast), background var(--t-fast);
+}
+.project-card:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-2);
+}
+
+.project-card .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex: none;
+    background: var(--faint);
+}
+
+.project-card__body {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.project-card__name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.project-card__meta {
+    font-size: 12px;
+    color: var(--faint);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+.project-card__meta .done-strong {
+    color: var(--success);
+    font-weight: 600;
+}
+
+.project-card .icon {
+    color: var(--faint);
+    width: 15px;
+    height: 15px;
+}
+.project-card:hover .icon {
+    color: var(--muted);
+}
+
+/* Project header on detail */
+.project-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.project-title .dot-lg {
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+    flex: none;
+    background: var(--faint);
+}
+
+.project-progress {
+    max-width: 320px;
+    margin-top: 10px;
+}
+
+/* Create project panel */
+.side-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+}
+.side-form h2 {
+    font-size: 14px;
+    margin-bottom: 14px;
+}
+
+/* ---- Tags -------------------------------------------------------------- */
+
+.tag-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--border);
+    max-width: 620px;
+}
+
+.tag-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 8px;
+    border-bottom: 1px solid var(--border);
+    transition: background var(--t-fast);
+}
+.tag-row:hover {
+    background: var(--surface-2);
+}
+
+.tag-row .tag-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 550;
+}
+.tag-row .tag-name .icon {
+    color: var(--faint);
+    width: 15px;
+    height: 15px;
+}
+
+.tag-row .tag-count {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---- Filter/search controls on All Tasks ------------------------------- */
+
+.toolbar {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+.toolbar .field {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.toolbar .field label {
+    margin: 0;
+}
+.toolbar .grow {
+    flex: 1 1 220px;
+}
+.toolbar .field__control {
+    height: 36px;
+    min-width: 140px;
+}
+
+.sort-tabs {
+    display: inline-flex;
+    gap: 2px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 2px;
+    background: var(--surface);
+}
+.sort-tabs a {
+    padding: 5px 11px;
+    border-radius: 5px;
+    font-size: 12.5px;
+    font-weight: 550;
+    color: var(--muted);
+}
+.sort-tabs a:hover {
+    color: var(--text);
+}
+.sort-tabs a.active {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 16px;
+}
+.pagination .meta {
+    font-size: 12.5px;
+    color: var(--faint);
+}

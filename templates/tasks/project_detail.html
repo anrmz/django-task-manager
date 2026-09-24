@@ -1,0 +1,72 @@
+﻿{% extends "base.html" %}
+{% load task_extras %}
+{% block title %}{{ project.name }} · Task Manager{% endblock %}
+
+{% block content %}
+<a href="{% url 'project_list' %}" class="back-link">{% icon 'arrow-left' size="15" %}Projects</a>
+
+<div class="page-head mt-8">
+    <div class="title-block">
+        <h1 class="page-title project-title">
+            <span class="dot-lg" style="background: {{ project.color }}"></span>
+            {{ project.name }}
+        </h1>
+        <p class="page-sub">{{ project.open_count }} open &middot; {{ project.total_count }} total</p>
+        <div class="project-progress">
+            <div class="progress-label">
+                <strong>{{ project.done_count }} complete</strong>
+            </div>
+            <div class="progress {% if project.total_count and project.done_count == project.total_count %}progress--success{% endif %}"
+                 style="--pct: {% if project.total_count %}{% widthratio project.done_count project.total_count 100 %}{% else %}0{% endif %}%">
+                <span></span>
+            </div>
+        </div>
+    </div>
+    <div class="page-head-actions">
+        <a href="{% url 'task_create' %}?project={{ project.pk }}" class="btn btn-ghost">
+            {% icon 'pencil' %}<span>Full form</span>
+        </a>
+        <button type="button" class="btn btn-primary js-quick-add-open" data-quick-add-project="{{ project.pk }}">
+            {% icon 'plus' %}<span>Add task</span>
+        </button>
+        <a href="{% url 'project_delete' project.pk %}" class="icon-btn" aria-label="Delete project" title="Delete project">
+            {% icon 'trash' %}
+        </a>
+    </div>
+</div>
+
+{% if open_tasks %}
+<div class="list-section">
+    <div class="list-section__head">
+        <h2>Open</h2><span class="count">{{ open_tasks|length }}</span>
+    </div>
+    <div class="task-list" data-task-list>
+        {% for task in open_tasks %}
+        {% include "components/task_item.html" %}
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">{% icon 'list' size="22" %}</span>
+    <h2>All caught up</h2>
+    <p>No open tasks in {{ project.name }}.</p>
+    <button type="button" class="btn btn-primary js-quick-add-open" data-quick-add-project="{{ project.pk }}">
+        {% icon 'plus' %}<span>Add a task</span>
+    </button>
+</div>
+{% endif %}
+
+{% if done_tasks %}
+<div class="list-section">
+    <div class="list-section__head">
+        <h2>Completed</h2><span class="count">{{ done_tasks|length }}</span>
+    </div>
+    <div class="task-list">
+        {% for task in done_tasks %}
+        {% include "components/task_item.html" %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,87 @@
+{% load task_extras %}
+<aside class="app-sidebar" id="sidebar" aria-label="Primary">
+    <nav class="side-nav">
+        <div class="side-section">
+            <p class="side-label">Focus</p>
+            <a href="{% url 'my_day' %}" class="side-link {% if nav.page == 'my_day' %}active{% endif %}"
+               title="My Day" aria-label="My Day">
+                {% icon 'sun' %}
+                <span class="side-text">My Day</span>
+                <span class="side-count is-alert" data-nav-count="overdue" {% if not nav.overdue_count %}hidden{% endif %}>{{ nav.overdue_count }}</span>
+            </a>
+            <a href="{% url 'inbox' %}" class="side-link {% if nav.page == 'inbox' %}active{% endif %}"
+               title="Inbox" aria-label="Inbox">
+                {% icon 'inbox' %}
+                <span class="side-text">Inbox</span>
+                <span class="side-count" data-nav-count="inbox" {% if not nav.inbox_count %}hidden{% endif %}>{{ nav.inbox_count }}</span>
+            </a>
+            <a href="{% url 'upcoming' %}" class="side-link {% if nav.page == 'upcoming' %}active{% endif %}"
+               title="Upcoming" aria-label="Upcoming">
+                {% icon 'calendar' %}
+                <span class="side-text">Upcoming</span>
+                <span class="side-count" data-nav-count="upcoming" {% if not nav.upcoming_count %}hidden{% endif %}>{{ nav.upcoming_count }}</span>
+            </a>
+        </div>
+
+        <div class="side-section">
+            <p class="side-label">Tasks</p>
+            <a href="{% url 'all_tasks' %}" class="side-link {% if nav.page == 'all_tasks' %}active{% endif %}"
+               title="All Tasks" aria-label="All Tasks">
+                {% icon 'list' %}
+                <span class="side-text">All Tasks</span>
+            </a>
+            <a href="{% url 'completed' %}" class="side-link {% if nav.page == 'completed' %}active{% endif %}"
+               title="Completed" aria-label="Completed">
+                {% icon 'check-circle' %}
+                <span class="side-text">Completed</span>
+                <span class="side-count" data-nav-count="completed" {% if not nav.completed_count %}hidden{% endif %}>{{ nav.completed_count }}</span>
+            </a>
+            <a href="{% url 'trash' %}" class="side-link {% if nav.page == 'trash' %}active{% endif %}"
+               title="Trash" aria-label="Trash">
+                {% icon 'trash' %}
+                <span class="side-text">Trash</span>
+                <span class="side-count" data-nav-count="trash" {% if not nav.trash_count %}hidden{% endif %}>{{ nav.trash_count }}</span>
+            </a>
+        </div>
+
+        <div class="side-section">
+            <p class="side-label">Organize</p>
+            <a href="{% url 'project_list' %}" class="side-link {% if nav.page == 'projects' %}active{% endif %}"
+               title="Projects" aria-label="Projects">
+                {% icon 'folder' %}
+                <span class="side-text">Projects</span>
+                {% if nav.project_count %}<span class="side-count">{{ nav.project_count }}</span>{% endif %}
+            </a>
+            <div class="side-projects" aria-hidden="true">
+                {% for project in nav.projects %}
+                <a href="{% url 'project_detail' project.pk %}" class="side-project" tabindex="-1">
+                    <span class="dot" style="background: {{ project.color }}"></span>
+                    <span>{{ project.name }}</span>
+                </a>
+                {% endfor %}
+            </div>
+            <a href="{% url 'tags_list' %}" class="side-link {% if nav.page == 'tags' %}active{% endif %}"
+               title="Tags" aria-label="Tags">
+                {% icon 'tag' %}
+                <span class="side-text">Tags</span>
+            </a>
+        </div>
+
+        <div class="side-section">
+            <p class="side-label">Insights</p>
+            <a href="{% url 'productivity' %}" class="side-link {% if nav.page == 'productivity' %}active{% endif %}"
+               title="Productivity" aria-label="Productivity">
+                {% icon 'chart' %}
+                <span class="side-text">Productivity</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="side-foot">
+        <a href="{% url 'settings' %}" class="side-link {% if nav.page == 'settings' %}active{% endif %}"
+           title="Settings" aria-label="Settings">
+            {% icon 'settings' %}
+            <span class="side-text">Settings</span>
+        </a>
+    </div>
+</aside>

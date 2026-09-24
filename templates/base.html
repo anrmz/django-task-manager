@@ -1,0 +1,102 @@
+{% load static task_extras %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#f7f7f8">
+        <title>{% block title %}Task Manager{% endblock %}</title>
+        <script>
+        (function () {
+            var key = "taskmanager.theme";
+            var saved = null;
+            try { saved = window.localStorage.getItem(key); } catch (e) {}
+            var pref = saved || "system";
+            var dark = pref === "dark" || (pref === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+            var el = document.documentElement;
+            el.setAttribute("data-theme", dark ? "dark" : "light");
+            el.setAttribute("data-theme-pref", pref);
+        })();
+        </script>
+        <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%232563eb'/%3E%3Cpath d='M6 12l4 4 8-8' stroke='white' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+        <link rel="preconnect" href="https://rsms.me">
+        <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+        <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
+        <link rel="stylesheet" href="{% static 'css/base.css' %}">
+        <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+        <link rel="stylesheet" href="{% static 'css/nav.css' %}">
+        <link rel="stylesheet" href="{% static 'css/ui.css' %}">
+        <link rel="stylesheet" href="{% static 'css/tasks.css' %}">
+        <link rel="stylesheet" href="{% static 'css/projects.css' %}">
+        <link rel="stylesheet" href="{% static 'css/insights.css' %}">
+        <link rel="stylesheet" href="{% static 'css/modals.css' %}">
+        <link rel="stylesheet" href="{% static 'css/editor.css' %}">
+        <link rel="stylesheet" href="{% static 'css/toasts.css' %}">
+        <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+        <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+        {% block extra_css %}{% endblock %}
+    </head>
+    <body class="{% if prefs and prefs.density == 'compact' %}density--compact {% endif %}{% block body_class %}{% endblock %}">
+        {% if user.is_authenticated %}
+        <script id="tm-config" type="application/json">
+        {
+            "paletteUrl": "{% url 'palette_json' %}",
+            "quickAddUrl": "{% url 'quick_add' %}",
+            "toggleUrl": "{% url 'task_toggle' 0 %}",
+            "csrf": "{{ csrf_token }}",
+            "tagOptions": {{ nav.tag_options|safe }},
+            "nav": [
+                {"label": "My Day", "url": "{% url 'my_day' %}", "icon": "sun"},
+                {"label": "Inbox", "url": "{% url 'inbox' %}", "icon": "inbox"},
+                {"label": "Upcoming", "url": "{% url 'upcoming' %}", "icon": "calendar"},
+                {"label": "All Tasks", "url": "{% url 'all_tasks' %}", "icon": "list"},
+                {"label": "Projects", "url": "{% url 'project_list' %}", "icon": "folder"},
+                {"label": "Tags", "url": "{% url 'tags_list' %}", "icon": "tag"},
+                {"label": "Productivity", "url": "{% url 'productivity' %}", "icon": "chart"},
+                {"label": "Settings", "url": "{% url 'settings' %}", "icon": "settings"}
+            ]
+        }
+        </script>
+
+        {% include "components/command_palette.html" %}
+        {% include "components/quick_add.html" %}
+        {% endif %}
+
+        {% include "components/toasts.html" %}
+
+        <div class="app-shell">
+            {% block shell %}
+            {% include "components/topbar.html" %}
+            <div class="app-body">
+                {% include "components/sidebar.html" %}
+                <main class="app-main" id="main">
+                    <div class="app-content">
+                        {% block content %}{% endblock %}
+                    </div>
+                    <footer class="app-footer">
+                        <span>Task Manager</span>
+                        <span>{{ user.username }}</span>
+                    </footer>
+                </main>
+            </div>
+            {% include "components/mobile_nav.html" %}
+            {% endblock %}
+        </div>
+
+        <noscript>
+            <div style="padding: 16px; text-align: center; color: #6b7280; font-size: 13px;">
+                JavaScript is disabled &middot;
+                <a href="{% url 'task_create' %}" style="color: #2563eb;">Create a task</a>
+            </div>
+        </noscript>
+
+        <script src="{% static 'js/icons.js' %}"></script>
+        <script src="{% static 'js/theme.js' %}"></script>
+        <script src="{% static 'js/toast.js' %}"></script>
+        <script src="{% static 'js/tasks.js' %}"></script>
+        <script src="{% static 'js/navigation.js' %}"></script>
+        <script src="{% static 'js/task-editor.js' %}"></script>
+        <script src="{% static 'js/search.js' %}"></script>
+        {% block extra_js %}{% endblock %}
+    </body>
+</html>

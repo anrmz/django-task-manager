@@ -1,0 +1,114 @@
+/* ==========================================================================
+   Task Manager · Toasts
+   ========================================================================== */
+
+.toast-stack {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 120;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: min(340px, calc(100vw - 24px));
+}
+
+.toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 11px 14px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    font-size: 13.5px;
+    animation: toast-in var(--t-base) both;
+}
+.toast .icon {
+    width: 16px;
+    height: 16px;
+    margin-top: 1px;
+    flex: none;
+}
+.toast--success {
+    border-left-color: var(--success);
+}
+.toast--success .icon {
+    color: var(--success);
+}
+.toast--error {
+    border-left-color: var(--danger);
+}
+.toast--error .icon {
+    color: var(--danger);
+}
+.toast--info {
+    border-left-color: var(--info);
+}
+.toast--info .icon {
+    color: var(--info);
+}
+
+.toast__msg {
+    flex: 1;
+    line-height: 1.4;
+}
+
+.toast__close {
+    border: 0;
+    background: transparent;
+    color: var(--faint);
+    padding: 2px;
+    border-radius: 4px;
+    line-height: 0;
+}
+.toast__close:hover {
+    color: var(--text);
+}
+.toast__close .icon {
+    width: 14px;
+    height: 14px;
+    margin: 0;
+}
+
+.toast__action {
+    flex: none;
+    border: 0;
+    background: transparent;
+    color: var(--primary);
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 3px 4px 3px 8px;
+    margin: -3px 0 -3px -14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.toast__action:hover {
+    background: var(--surface-hover);
+    text-decoration: underline;
+}
+
+.toast.is-leaving {
+    animation: toast-out 160ms var(--ease) both;
+}
+
+@keyframes toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+@keyframes toast-out {
+    to {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}

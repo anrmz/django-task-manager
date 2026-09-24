@@ -1,0 +1,14 @@
+{% load task_extras %}
+<div class="toast-stack" id="toastStack" aria-live="polite">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="toast toast--{{ message.tags }}" role="status" data-server-toast>
+        {% if message.tags == 'error' %}{% icon 'alert' %}
+        {% elif message.tags == 'success' %}{% icon 'check-circle' %}
+        {% else %}{% icon 'info' %}{% endif %}
+        <span class="toast__msg">{{ message }}</span>
+        <button type="button" class="toast__close" aria-label="Dismiss">{% icon 'x' %}</button>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>

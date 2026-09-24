@@ -1,0 +1,30 @@
+{% load task_extras %}
+<dialog class="overlay" id="paletteDialog" aria-label="Command palette">
+    <div class="palette" role="dialog" aria-modal="true">
+        <div class="palette__input-row">
+            {% icon 'search' %}
+            <input type="text" class="palette__input" id="paletteInput"
+                   placeholder="Search tasks, projects, tags&hellip;"
+                   autocomplete="off" spellcheck="false" aria-label="Search">
+            <kbd>Esc</kbd>
+        </div>
+        <div class="palette__results" id="paletteResults" role="listbox" aria-label="Results"></div>
+        <div class="palette__footer">
+            <span><kbd>&uarr;&darr;</kbd> navigate</span>
+            <span><kbd>Enter</kbd> open</span>
+            <span><kbd>N</kbd> new task</span>
+            <span><kbd>D</kbd> theme</span>
+        </div>
+    </div>
+</dialog>
+
+<dialog class="overlay" id="shortcutsDialog" aria-label="Keyboard shortcuts">
+    <div class="sheet" role="dialog" aria-modal="true">
+        <div class="sheet__head">
+            <h2>{% icon 'keyboard' size="16" %}Keyboard shortcuts</h2>
+            <button type="button" class="icon-btn" data-close-shortcuts aria-label="Close">{% icon 'x' %}</button>
+        </div>
+        <ul class="shortcuts-list" data-shortcuts-list></ul>
+        <p class="small muted mt-4">Global shortcuts work on every page. In the palette, ↑/↓ move and Enter opens.</p>
+    </div>
+</dialog>

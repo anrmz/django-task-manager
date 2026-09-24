@@ -1,0 +1,19 @@
+{% load task_extras %}
+<li class="subtask" data-subtask-row="{{ subtask.pk }}">
+    <form method="post" action="{% url 'subtask_toggle' subtask.pk %}"
+          class="subtask__check-form" data-subtask-toggle>
+        {% csrf_token %}
+        <button type="submit" class="subtask__check {% if subtask.done %}is-done{% endif %}"
+                aria-label="{% if subtask.done %}Reopen{% else %}Complete{% endif %} {{ subtask.title }}"
+                aria-pressed="{% if subtask.done %}true{% else %}false{% endif %}">
+            {% if subtask.done %}{% icon 'check' size="12" %}{% endif %}
+        </button>
+    </form>
+    <span class="subtask__title {% if subtask.done %}is-done{% endif %}">{{ subtask.title }}</span>
+    <form method="post" action="{% url 'subtask_delete' subtask.pk %}" class="subtask__remove-form" data-subtask-delete>
+        {% csrf_token %}
+        <button type="submit" class="icon-btn subtask__remove" aria-label="Remove {{ subtask.title }}" title="Remove">
+            {% icon 'x' size="14" %}
+        </button>
+    </form>
+</li>

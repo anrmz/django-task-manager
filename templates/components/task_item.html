@@ -1,0 +1,91 @@
+{% load task_extras %}
+<div class="task-item {% if task.status == 'completed' %}is-completed{% endif %}"
+     data-task-row="{{ task.pk }}">
+
+    <form method="post" action="{% url 'task_toggle' task.pk %}"
+          class="task-toggle-form" data-task-toggle data-task-pk="{{ task.pk }}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <label class="task__toggle {% if task.status == 'completed' %}is-done{% endif %}"
+               aria-label="{% if task.status == 'completed' %}Reopen{% else %}Complete{% endif %} task">
+            <input type="checkbox" class="task__toggle-input"
+                   {% if task.status == 'completed' %}checked{% endif %}>
+            <span class="task__check" aria-hidden="true">{% icon 'check' size="13" %}</span>
+        </label>
+    </form>
+
+    <div class="task__body">
+        <a href="{% url 'task_detail' task.pk %}" class="task__title">{{ task.title }}</a>
+        {% if task.description %}
+        <p class="task__desc">{{ task.description|truncatechars:140 }}</p>
+        {% endif %}
+        <div class="task__meta">
+            {% if task.status == 'completed' %}
+                {% if task.completed_at %}<span class="chip task__meta-note">{% icon 'check-circle' size="13" %}Done {{ task.completed_at|date:"M j" }}</span>{% endif %}
+            {% else %}
+                {% if task.project %}
+                <span class="chip chip--project">
+                    <span class="dot" style="background: {{ task.project.color }}"></span>
+                    {{ task.project.name }}
+                </span>
+                {% endif %}
+                {% if task.due_date %}
+                    {% with d=task.due_date|days_until %}
+                    <span class="chip task__due {% if task.is_overdue %}chip--overdue{% endif %}{% if not task.is_overdue and d == 0 %} task__due--today{% endif %}"
+                          data-row-due data-row-time="{% if task.due_time %}{{ task.due_time|date:'H:i' }}{% endif %}">
+                        {% if task.is_overdue %}
+                            {% icon 'alert' size="13" %}{{ task.due_date|date:"M j" }} &middot; Overdue
+                        {% else %}
+                            {% icon 'calendar' size="13" %}{% if d == 0 %}Today{% elif d == 1 %}Tomorrow{% else %}{{ task.due_date|date:"M j" }}{% endif %}{% if task.due_time %} &middot; {{ task.due_time|time:"H:i" }}{% endif %}
+                        {% endif %}
+                    </span>
+                    {% endwith %}
+                {% endif %}
+                {% with subds=task.sub_done|default_if_none:0 subts=task.sub_count|default_if_none:0 %}
+                {% if subts > 0 %}
+                <span class="chip chip--subtask {% if subds == subts %}chip--subtask-done{% endif %}">
+                    {% icon 'layers' size="13" %}<span data-subtask-chip="{{ task.pk }}">{{ subds }}/{{ subts }}</span>
+                </span>
+                {% endif %}
+                {% endwith %}
+                {% if task.priority != 'medium' %}
+                    <span class="chip chip--priority {{ task.priority|priority_tone }}" data-row-priority="{{ task.priority }}">{% icon 'flag' size="13" %}{{ task.get_priority_display }}</span>
+                {% endif %}
+            {% endif %}
+            {% for tag in task.tags.all|slice:":2" %}
+                <span class="chip chip--tag">#{{ tag.name }}</span>
+            {% endfor %}
+            {% if task.tags.count > 2 %}<span class="chip chip--tag">+{{ task.tags.count|add:"-2" }}</span>{% endif %}
+        </div>
+    </div>
+
+    <div class="task__actions">
+        <button type="button" class="task__menu js-row-menu" aria-haspopup="menu"
+                aria-expanded="false" aria-label="Task actions">
+            {% icon 'more' %}
+        </button>
+
+        <div class="row-menu hidden" role="menu" aria-label="Task actions">
+            <a role="menuitem" class="row-menu__item" href="{% url 'task_detail' task.pk %}">
+                {% icon 'list' size="14" %}Task details
+            </a>
+            <a role="menuitem" class="row-menu__item" href="{% url 'task_edit' task.pk %}">
+                {% icon 'pencil' size="14" %}Edit
+            </a>
+            <div class="row-menu__sep"></div>
+            <span class="row-menu__head">Set date</span>
+            <button type="button" class="row-menu__item" data-row-patch="due_date" data-value="today" role="menuitem">Today</button>
+            <button type="button" class="row-menu__item" data-row-patch="due_date" data-value="tomorrow" role="menuitem">Tomorrow</button>
+            <button type="button" class="row-menu__item" data-row-patch="due_date" data-value="next-week" role="menuitem">Next week</button>
+            <button type="button" class="row-menu__item" data-row-patch="due_date" data-value="" role="menuitem">No date</button>
+            <div class="row-menu__sep"></div>
+            <form method="post" action="{% url 'task_delete' task.pk %}" class="row-menu__form" data-row-delete>
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button type="submit" class="row-menu__item row-menu__item--danger" role="menuitem">
+                    {% icon 'trash' size="14" %}Move to trash
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

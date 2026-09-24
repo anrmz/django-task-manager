@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load task_extras %}
+{% block title %}Not found · Task Manager{% endblock %}
+
+{% block shell %}
+<main class="app-main">
+    <div class="app-content">
+        <div class="empty-state" style="padding-top: 10vh;">
+            <span class="empty-icon">{% icon 'info' size="22" %}</span>
+            <h2>Page not found</h2>
+            <p>That link doesn't lead anywhere — it may have been moved or deleted.</p>
+            <div class="btns" style="justify-content: center; margin-top: 4px;">
+                <a href="{% if user.is_authenticated %}{% url 'my_day' %}{% else %}{% url 'login' %}{% endif %}"
+                   class="btn btn-primary">{% icon 'sun' %}<span>Back to My Day</span></a>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load task_extras %}
+{% block title %}Settings · Task Manager{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div class="title-block">
+        <h1 class="page-title">Settings</h1>
+        <p class="page-sub">Your account, appearance and security.</p>
+    </div>
+    <div class="page-head-actions">
+        <button type="button" class="btn btn-ghost js-quick-add-open">
+            {% icon 'plus' %}<span>Add task</span>
+        </button>
+    </div>
+</div>
+
+<div class="side-form">
+    <h2>Account</h2>
+    <dl class="account-list">
+        <div class="account-row">
+            <dt>Username</dt>
+            <dd>{{ user.username }}</dd>
+        </div>
+        <div class="account-row">
+            <dt>Email</dt>
+            <dd>{{ user.email|default:"—" }}</dd>
+        </div>
+        <div class="account-row">
+            <dt>Member since</dt>
+            <dd>{{ user.date_joined|date:"M Y" }}</dd>
+        </div>
+        <div class="account-row">
+            <dt>Tasks</dt>
+            <dd>{{ completed }} completed &middot; {{ total }} total</dd>
+        </div>
+    </dl>
+</div>
+
+<div class="side-form mt-16">
+    <h2>Appearance</h2>
+    <p class="small muted" style="margin-bottom:12px;">
+        The interface follows your theme instantly — no reload needed.
+    </p>
+    <div class="segmented" id="themeSegmented" role="group" aria-label="Theme">
+        <button type="button" class="js-theme-choice" data-theme-pref="light">{% icon 'sun' %}Light</button>
+        <button type="button" class="js-theme-choice" data-theme-pref="dark">{% icon 'moon' %}Dark</button>
+        <button type="button" class="js-theme-choice" data-theme-pref="system">{% icon 'appearance' %}System</button>
+    </div>
+</div>
+
+<div class="side-form mt-16">
+    <h2>Preferences</h2>
+    <p class="small muted" style="margin-bottom:12px;">
+        Saved to your account and applied wherever you sign in.
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in prefs_form %}
+        <div class="field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<p class="small muted">{{ field.help_text }}</p>{% endif %}
+            {% for error in field.errors %}
+            <div class="field__error">{% icon 'alert' size="13" %}{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-soft">
+            {% icon 'check' %}<span>Save preferences</span>
+        </button>
+    </form>
+</div>
+
+<div class="side-form mt-16">
+    <h2>Change password</h2>
+    <p class="small muted" style="margin-bottom:14px;">
+        Use at least 8 characters, not entirely numeric and not too common.
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        {% if pwd_form.non_field_errors %}
+        <div class="auth-error">{% icon 'alert' %}{{ pwd_form.non_field_errors|first }}</div>
+        {% endif %}
+        {% for field in pwd_form %}
+        <div class="field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% for error in field.errors %}
+            <div class="field__error">{% icon 'alert' size="13" %}{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">
+            {% icon 'check' %}<span>Update password</span>
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Live preview when picking list density; saved server-side on submit.
+    (function () {
+        var select = document.getElementById("{{ prefs_form.density.id_for_label }}");
+        if (!select) return;
+        function apply(value) {
+            document.body.classList.toggle("density--compact", value === "compact");
+        }
+        select.addEventListener("change", function () { apply(select.value); });
+        apply(select.value);
+    })();
+</script>
+{% endblock %}

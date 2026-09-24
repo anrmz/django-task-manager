@@ -1,0 +1,48 @@
+﻿{% extends "base.html" %}
+{% load task_extras %}
+{% block title %}Projects · Task Manager{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div class="title-block">
+        <h1 class="page-title">Projects</h1>
+        <p class="page-sub">Lightweight folders to group your work.</p>
+    </div>
+</div>
+
+<form method="post" action="{% url 'project_create' %}" class="toolbar">
+    {% csrf_token %}
+    <div class="field grow">
+        <label class="visually-hidden" for="new-project">Project name</label>
+        <input type="text" id="new-project" name="name" class="field__control"
+               placeholder="New project name&hellip;" autocomplete="off" spellcheck="false" required>
+    </div>
+    <button type="submit" class="btn btn-primary">
+        {% icon 'folder' %}<span>Create</span>
+    </button>
+</form>
+
+{% if projects %}
+<div class="project-grid mt-16">
+    {% for project in projects %}
+    <a href="{% url 'project_detail' project.pk %}" class="project-card">
+        <span class="dot" style="background: {{ project.color }}"></span>
+        <span class="project-card__body">
+            <span class="project-card__name">{{ project.name }}</span>
+            <span class="project-card__meta">
+                {% if project.done_count %}<span class="done-strong">{{ project.done_count }} done</span>{% endif %}
+                {{ project.open_count }} open
+            </span>
+        </span>
+        {% icon 'chevron-right' %}
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">{% icon 'folder' size="22" %}</span>
+    <h2>No projects yet</h2>
+    <p>Group related tasks under a name — e.g. Work, Home, Side project.</p>
+</div>
+{% endif %}
+{% endblock %}

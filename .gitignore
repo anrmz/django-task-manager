@@ -1,0 +1,35 @@
+# Python / Django
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+venv/
+.venv/
+docs/venv/
+*.sqlite3
+db.sqlite3
+db.sqlite3-journal
+/media/
+/staticfiles/
+collectstatic/
+
+# Environment / secrets
+.env
+*.env
+DJANGO_SECRET_KEY
+
+# Editor / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs / cache
+*.log
+*.cache
+__pypackages__/
+.pytest_cache/
+.coverage
+.htmlcov/

@@ -1,0 +1,184 @@
+/* ==========================================================================
+   Task Manager · Base — reset, typography, shared primitives
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+    margin: 0;
+    font-weight: 650;
+    letter-spacing: -0.015em;
+    color: var(--text);
+}
+
+p {
+    margin: 0;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    font: inherit;
+    cursor: pointer;
+}
+
+input,
+select,
+textarea,
+button {
+    color: inherit;
+}
+
+img,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+::selection {
+    background: var(--primary-soft);
+}
+
+kbd {
+    font-family: inherit;
+    font-size: 11px;
+    line-height: 1;
+    padding: 3px 6px;
+    border: 1px solid var(--border-strong);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    background: var(--surface-2);
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.icon {
+    flex: none;
+}
+
+/* Scrollbars — quiet, theme-aware */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 999px;
+    border: 3px solid var(--bg);
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* ---------- Layout utilities ---------- */
+
+.container {
+    width: 100%;
+    max-width: var(--maxw);
+    margin-inline: auto;
+}
+
+.muted {
+    color: var(--muted);
+}
+.faint {
+    color: var(--faint);
+}
+.small {
+    font-size: 12.5px;
+}
+
+.flex {
+    display: flex;
+    align-items: center;
+}
+.btns {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.gap-8 {
+    gap: 8px;
+}
+.gap-12 {
+    gap: 12px;
+}
+.mt-8 {
+    margin-top: 8px;
+}
+.mt-16 {
+    margin-top: 16px;
+}
+.mt-24 {
+    margin-top: 24px;
+}
+.mb-0 {
+    margin-bottom: 0;
+}
+
+.divider {
+    height: 1px;
+    background: var(--border);
+    border: 0;
+    margin: 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+}

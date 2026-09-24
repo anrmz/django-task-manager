@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load task_extras %}
+{% block title %}Log out · Task Manager{% endblock %}
+
+{% block content %}
+<div class="confirm">
+    <h2>Log out?</h2>
+    <p>You can sign back in at any time.</p>
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <div class="btns">
+            <a href="{% url 'my_day' %}" class="btn btn-ghost">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+                {% icon 'logout' %}<span>Log out</span>
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

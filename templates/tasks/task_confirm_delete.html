@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load task_extras %}
+{% block title %}Delete task · Task Manager{% endblock %}
+
+{% block content %}
+<div class="confirm">
+    <div class="confirm__icon">{% icon 'trash' size="28" %}</div>
+    <h2>Move “{{ task.title }}” to trash?</h2>
+    <p>It's kept in Trash for a few days so you can change your mind — restoring
+       is one click away. Permanently remove or restore it any time from the
+       Trash page.</p>
+    <form method="post" action="{% url 'task_delete' task.pk %}"
+          data-task-delete data-next="{% url 'all_tasks' %}"
+          data-restore-url="{% url 'task_restore' task.pk %}"
+          data-title="{{ task.title|escapejs }}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.META.HTTP_REFERER|default:'' }}">
+        <div class="btns">
+            <a href="{% url 'task_detail' task.pk %}" class="btn btn-ghost">Cancel</a>
+            <button type="submit" class="btn btn-danger">
+                {% icon 'trash' %}<span>Move to trash</span>
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

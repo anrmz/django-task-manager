@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load task_extras %}
+{% block title %}Trash · Task Manager{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div class="title-block">
+        <h1 class="page-title">Trash</h1>
+        <p class="page-sub">
+            {% if trash_count %}
+            {{ trash_count }} task{{ trash_count|pluralize }} here — you can restore any of them.
+            {% else %}
+            Deleted tasks wait here until you restore or remove them.
+            {% endif %}
+        </p>
+    </div>
+    {% if trash_count %}
+    <div class="page-actions">
+        <form method="post" action="{% url 'trash_empty' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-ghost btn-danger-text"
+                    onclick="return confirm('Permanently delete every trashed task? This cannot be undone.');">
+                {% icon 'trash' %}<span>Empty trash</span>
+            </button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+{% if trashed %}
+<div class="task-list trash-list">
+    {% for task in trashed %}
+    <div class="task-item is-trashed" data-task-row="{{ task.pk }}">
+        <div class="trash-item__meta">
+            {% icon 'trash' size="16" %}
+            <span>{{ task.deleted_at|date:"M j, Y" }}</span>
+        </div>
+        <div class="task__body">
+            <span class="task__title task__title--struck">{{ task.title }}</span>
+            <div class="task__meta">
+                {% if task.project %}
+                <span class="chip chip--project">
+                    <span class="dot" style="background: {{ task.project.color }}"></span>
+                    {{ task.project.name }}
+                </span>
+                {% endif %}
+                {% if task.due_date %}
+                <span class="chip">{% icon 'calendar' size="13" %}{{ task.due_date|date:"M j" }}</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="trash-item__actions">
+            <form method="post" action="{% url 'task_restore' task.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-ghost" title="Restore">
+                    {% icon 'restore' %}<span>Restore</span>
+                </button>
+            </form>
+            <form method="post" action="{% url 'task_delete_forever' task.pk %}"
+                  onsubmit="return confirm('Permanently delete “{{ task.title|escapejs }}”? This cannot be undone.');">
+                {% csrf_token %}
+                <button type="submit" class="icon-btn icon-btn--danger" title="Delete forever" aria-label="Delete forever">
+                    {% icon 'x' %}
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">{% icon 'trash' size="22" %}</span>
+    <h2>Trash is empty</h2>
+    <p>Tasks you delete are kept here for a little while, then removed.</p>
+    <a href="{% url 'all_tasks' %}" class="btn btn-primary">
+        {% icon 'list' %}<span>Back to All Tasks</span>
+    </a>
+</div>
+{% endif %}
+{% endblock %}
