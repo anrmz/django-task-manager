@@ -1,0 +1,32 @@
+# Vercel build configuration for the Django Task Manager.
+#
+# Vercel's Python runtime reads this file to (a) install project dependencies
+# and (b) run the Build Command defined in `[tool.vercel.scripts].build` before
+# a deployment goes live. `requirements.txt` remains the source of truth for
+# Render (`build.sh`) and local development; the pins below mirror it so Vercel
+# installs the exact same set whether it resolves dependencies from this file
+# or from `requirements.txt`.
+
+[project]
+name = "django-task-manager"
+version = "0.1.0"
+dependencies = [
+    "Django==6.1.1",
+    "psycopg[binary]==3.2.3",
+    "dj-database-url==2.3.0",
+    "gunicorn==23.0.0",
+    "whitenoise==6.8.2",
+    "tzdata==2026.4",
+]
+
+# Vercel Build Command: applied once per deployment, after dependencies are
+# installed and before the new code serves traffic. Django's built-in
+# migration planner is deterministic and idempotent, so an interrupted or
+# repeated build only ever applies the still-pending subset of migrations.
+# `--noinput` keeps the build non-interactive; if a migration fails the build
+# fails and the previous deployment keeps serving.
+#
+# There is no need to call `collectstatic` here — Vercel runs it automatically
+# when STATIC_ROOT is configured. Migration is never run per HTTP request.
+[tool.vercel.scripts]
+build = "python manage.py migrate --noinput"

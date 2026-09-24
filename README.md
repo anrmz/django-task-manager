@@ -197,13 +197,23 @@ settings module and reads `WSGI_APPLICATION`). It runs `collectstatic` and
 serves the collected files from the CDN at `/static/`; every other route hits
 the single WSGI function configured in `vercel.json`.
 
-1. Import the repo into Vercel — no Build command or Output directory is
-   needed (zero-config Django support).
-2. `DATABASE_URL`: point it at a managed PostgreSQL provider (Supabase, Neon
-   Render Postgres, etc.).
+Database migrations are applied automatically on every deployment: the Build
+Command defined in `pyproject.toml` (`[tool.vercel.scripts].build`) runs
+`python manage.py migrate --noinput` once during the build, before the new
+code serves traffic. Migrations are never run per HTTP request.
+
+1. Import the repo into Vercel — no Build Command or Output directory is
+   needed (zero-config Django support). Do **not** set a Build Command in the
+   Vercel dashboard: one there would override the `pyproject.toml` build
+   script that applies migrations.
+2. `DATABASE_URL`: attach a managed PostgreSQL provider, e.g. the **Neon**
+   integration, which injects `DATABASE_URL` automatically (Supabase or any
+   Postgres provider also works).
 3. Set the environment variables listed in the table above (`SECRET_KEY`,
    `DEBUG=False`, `EMAIL_*`) in **Project Settings → Environment Variables**
-   for the Production, Preview, and Development scopes.
+   for the Production, Preview, and Development scopes. `SECRET_KEY` and an
+   SMTP `EMAIL_BACKEND` are required for the settings to load (and therefore
+   for `migrate`) once `DEBUG=False`.
 4. `ALLOWED_HOSTS`/`CSRF_TRUSTED_ORIGINS`: only your **custom domains** need to
    be listed. Every `*.vercel.app` deployment/branch/production hostname is
    merged in automatically from Vercel's system environment variables, and
