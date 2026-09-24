@@ -71,27 +71,18 @@
 .ring-wrap {
     position: relative;
     width: 76px;
-    height: 76px;
+    aspect-ratio: 1 / 1;
     flex: none;
 }
 .my-day .ring-wrap {
     width: 80px;
-    height: 80px;
 }
 .ring {
     display: block;
-    width: 76px;
-    height: 76px;
+    width: 100%;
+    height: 100%;
     transform: rotate(-90deg);
     overflow: visible;
-}
-.my-day .ring {
-    width: 80px;
-    height: 80px;
-}
-.ring--lg {
-    width: 96px;
-    height: 96px;
 }
 .ring__track {
     fill: none;
@@ -125,7 +116,7 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    padding-inline: 6px;
+    padding-inline: 4px;
 }
 .ring-center__label {
     grid-area: 1 / 1;
@@ -376,7 +367,27 @@
 }
 .kpi-ring-card .ring-wrap {
     width: 96px;
-    height: 96px;
+}
+.kpi-ring-card .ring-aside {
+    flex: 1;
+    min-width: 0;
+    max-width: 480px;
+}
+.kpi-ring-card .ring-aside__title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text);
+}
+.kpi-ring-card .ring-aside__sub {
+    margin: 4px 0 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--muted);
+}
+.kpi-ring-card .ring-aside .progress {
+    margin-top: 12px;
 }
 
 /* ---- 4-week comparison bars --------------------------------------------- */
@@ -660,32 +671,30 @@
         margin-top: var(--sp-6);
     }
 
-    /* Productivity hero keeps its compact row on mobile */
+    /* Productivity hero: ring on top, copy below — never squeezes the ring */
     .kpi-ring-card {
-        display: flex;
-        flex-direction: row;
+        flex-direction: column;
         align-items: center;
+        text-align: center;
         gap: 14px;
-        padding: 16px;
+        padding: 20px 16px;
     }
     .kpi-ring-card .ring-wrap {
-        width: 68px;
-        height: 68px;
-        flex: none;
+        width: 88px;
     }
-    .kpi-ring-card .ring--lg {
-        width: 68px;
-        height: 68px;
+    .kpi-ring-card .ring-aside {
+        flex: 0 0 auto;
+        max-width: none;
+        width: 100%;
+        align-items: center;
     }
-    .kpi-ring-card .ring-center__value {
-        font-size: 20px;
+    .kpi-ring-card .ring-aside .progress {
+        width: min(100%, 320px);
     }
 
     /* My Day progress: ring scales to the smallest phones, text never clips */
-    .my-day .ring-wrap,
-    .my-day .ring {
+    .my-day .ring-wrap {
         width: 72px;
-        height: 72px;
     }
     .my-day-progress {
         gap: 14px;
