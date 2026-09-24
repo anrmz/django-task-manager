@@ -15,72 +15,149 @@
     </div>
 </div>
 
-{% if overdue or due_today or done_today %}
+{% if overdue or due_today or next_up or done_today %}
+<div class="dash">
+    <div class="dash-main">
 
-<div class="progress-card">
-    <div class="progress-label">
-        <strong>{{ progress_done }} done</strong> of {{ progress_total }} on your plate today
-    </div>
-    <div class="progress" style="--pct: {{ progress_pct }}%"><span></span></div>
-</div>
+        <section class="progress-card ring-card" aria-label="Your progress today">
+            <div class="ring-wrap">
+                <svg class="ring" viewBox="0 0 120 120" role="img" aria-label="{{ progress_done }} of {{ progress_total }} completed · {{ progress_pct }} percent">
+                    <circle class="ring__track" cx="60" cy="60" r="52"></circle>
+                    <circle class="ring__bar" cx="60" cy="60" r="52" style="--pct: {{ progress_pct }}"></circle>
+                </svg>
+                <div class="ring-center">
+                    <span class="ring-center__value">{{ progress_done }}</span>
+                    <span class="ring-center__label">of {{ progress_total }} done</span>
+                </div>
+            </div>
+            <div class="ring-aside">
+                <p class="ring-aside__title">
+                    {% if progress_pct %}You&rsquo;re {{ progress_pct }}% there{% else %}A fresh start{% endif %}
+                </p>
+                <p class="ring-aside__sub">Keep going &mdash; every completed task counts toward today.</p>
+                <div class="progress" style="--pct: {{ progress_pct }}%"><span></span></div>
+            </div>
+        </section>
 
-{% if overdue %}
-<div class="list-section">
-    <div class="list-section__head">
-        <h2>Overdue</h2><span class="count">{{ overdue|length }}</span>
-    </div>
-    <div class="task-list">
-        {% for task in overdue %}
-        {% include "components/task_item.html" %}
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
+        {% if quote %}
+        <div class="quote-card">
+            <span class="quote-card__mark" aria-hidden="true">{% icon 'sparkles' %}</span>
+            <div class="quote-card__text">
+                <p class="quote-card__body">&ldquo;{{ quote.0 }}&rdquo;</p>
+                <p class="quote-card__who">&mdash; {{ quote.1 }}</p>
+            </div>
+        </div>
+        {% endif %}
 
-{% if due_today %}
-<div class="list-section">
-    <div class="list-section__head">
-        <h2>Due today</h2><span class="count">{{ due_today|length }}</span>
-    </div>
-    <div class="task-list">
-        {% for task in due_today %}
-        {% include "components/task_item.html" %}
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
+        {% if overdue %}
+        <div class="list-section">
+            <div class="list-section__head">
+                <h2>Overdue</h2><span class="count">{{ overdue|length }}</span>
+            </div>
+            <div class="task-list">
+                {% for task in overdue %}
+                {% include "components/task_item.html" %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
-{% if next_up %}
-<div class="list-section">
-    <div class="list-section__head">
-        <h2>Next up</h2><span class="count">{{ next_up|length }} tomorrow</span>
-    </div>
-    <div class="task-list">
-        {% for task in next_up %}
-        {% include "components/task_item.html" %}
-        {% endfor %}
-    </div>
-    {% if later_week_count %}
-    <p class="page-sub mt-8" style="font-size:12.5px;">
-        {{ later_week_count }} more due in the next 7 days &middot;
-        <a href="{% url 'upcoming' %}" style="color: var(--primary); font-weight: 600;">See upcoming</a>
-    </p>
-    {% endif %}
-</div>
-{% endif %}
+        {% if due_today %}
+        <div class="list-section">
+            <div class="list-section__head">
+                <h2>Due today</h2><span class="count">{{ due_today|length }}</span>
+            </div>
+            <div class="task-list">
+                {% for task in due_today %}
+                {% include "components/task_item.html" %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
-{% if done_today %}
-<div class="list-section">
-    <div class="list-section__head">
-        <h2>Completed today</h2><span class="count">{{ done_today|length }}</span>
+        {% if next_up %}
+        <div class="list-section">
+            <div class="list-section__head">
+                <h2>Next up</h2><span class="count">{{ next_up|length }} tomorrow</span>
+            </div>
+            <div class="task-list">
+                {% for task in next_up %}
+                {% include "components/task_item.html" %}
+                {% endfor %}
+            </div>
+            {% if later_week_count %}
+            <p class="page-sub mt-8" style="font-size:12.5px;">
+                {{ later_week_count }} more due in the next 7 days &middot;
+                <a href="{% url 'upcoming' %}" style="color: var(--primary); font-weight: 600;">See upcoming</a>
+            </p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if done_today %}
+        <div class="list-section">
+            <div class="list-section__head">
+                <h2>Completed today</h2><span class="count">{{ done_today|length }}</span>
+            </div>
+            <div class="task-list">
+                {% for task in done_today|slice:":10" %}
+                {% include "components/task_item.html" %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
     </div>
-    <div class="task-list">
-        {% for task in done_today|slice:":10" %}
-        {% include "components/task_item.html" %}
-        {% endfor %}
-    </div>
+
+    <aside class="dash-side">
+        <section class="dash-card dash-card--side" aria-label="At a glance">
+            <div class="dash-card__head"><h2>At a glance</h2></div>
+            <div class="dash-card__body">
+                <div class="glance">
+                    <div class="glance-row">
+                        <span class="glance-row__key">{% icon 'zap' %}Done today</span>
+                        <span class="glance-row__val">{{ progress_done }}</span>
+                    </div>
+                    <div class="glance-row">
+                        <span class="glance-row__key">{% icon 'circle' %}Due today</span>
+                        <span class="glance-row__val">{{ due_today|length }}</span>
+                    </div>
+                    <div class="glance-row glance-row--alert">
+                        <span class="glance-row__key">{% icon 'alert' %}Overdue</span>
+                        <span class="glance-row__val">{{ overdue|length }}</span>
+                    </div>
+                    <div class="glance-row">
+                        <span class="glance-row__key">{% icon 'calendar' %}Next up</span>
+                        <span class="glance-row__val">{{ next_up|length }}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="dash-card dash-card--side" aria-label="Tasks completed in the last 7 days">
+            <div class="dash-card__head">
+                <h2>Last 7 days</h2>
+            </div>
+            <div class="dash-card__body">
+                <div class="mini-chart">
+                    <div class="mini-chart__bars" role="img" aria-label="Completed tasks per day, latest week">
+                        {% for day in week_trend %}
+                        <div class="mini-chart__col">
+                            <div class="mini-chart__fill" style="height: {% widthratio day.count week_peak 100 %}%;" title="{{ day.label }}: {{ day.count }}"></div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mini-chart__labels">
+                        {% for day in week_trend %}<span>{{ day.label|slice:":1" }}</span>{% endfor %}
+                    </div>
+                </div>
+                <p class="small muted" style="margin-top:10px;">
+                    {{ week_trend.6.count }} completed today.
+                </p>
+            </div>
+        </section>
+    </aside>
 </div>
-{% endif %}
 
 {% else %}
 <div class="empty-state">
@@ -90,6 +167,9 @@
     <button type="button" class="btn btn-primary js-quick-add-open" data-quick-add-due="today">
         {% icon 'plus' %}<span>Add your first task</span>
     </button>
+    {% if quote %}
+    <p class="empty-quote">&ldquo;{{ quote.0 }}&rdquo; <span>&mdash; {{ quote.1 }}</span></p>
+    {% endif %}
 </div>
 {% endif %}
 {% endblock %}

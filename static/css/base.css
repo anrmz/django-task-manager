@@ -160,6 +160,46 @@ kbd {
     display: none !important;
 }
 
+/* --------------------------------------------------------------------------
+   Accessibility — skip link (visible only on focus)
+   -------------------------------------------------------------------------- */
+
+.skip-link {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateY(-160%);
+    z-index: 200;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    background: var(--primary);
+    color: var(--on-primary);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: var(--shadow-lg);
+    transition: transform 160ms var(--ease);
+}
+.skip-link:focus-visible {
+    transform: translateY(0);
+}
+
+::selection {
+    background: var(--primary-soft);
+    color: var(--text);
+}
+
+/* Inner scroll regions should stay comfortable on short viewports */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
 [hidden] {
     display: none !important;
 }

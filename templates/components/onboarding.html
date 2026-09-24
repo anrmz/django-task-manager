@@ -1,0 +1,32 @@
+{% load task_extras %}
+<dialog class="overlay onboarding-overlay" id="onboardingDialog" aria-label="Welcome tour"
+        data-complete-url="{% url 'onboarding_complete' %}"
+        data-csrf="{{ csrf_token }}">
+    <div class="tour" role="document">
+        <div class="tour__spotlight" aria-hidden="true" hidden></div>
+
+        <div class="tour__card">
+            <div class="tour__media" data-tour-media aria-hidden="true"></div>
+
+            <div class="tour__step-label" id="tourStepLabel" data-tour-step-label>Step 1 of 6</div>
+            <h2 class="tour__title" data-tour-title>Welcome to Task Manager</h2>
+            <p class="tour__body" data-tour-body>
+                Plan your day, capture ideas, and watch your progress grow. Here&rsquo;s a quick 30-second tour.
+            </p>
+            <p class="tour__hint" data-tour-hint hidden>You can take this tour again any time from Settings.</p>
+
+            <div class="tour__points" data-tour-points aria-hidden="true">
+                <span class="is-active"></span>
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+
+            <div class="tour__actions">
+                <button type="button" class="btn btn-ghost" data-tour-skip>Skip tour</button>
+                <span class="tour__spacer"></span>
+                <button type="button" class="btn btn-ghost" data-tour-prev hidden>Back</button>
+                <button type="button" class="btn btn-primary" data-tour-next>Next</button>
+                <button type="button" class="btn btn-primary" data-tour-finish hidden>Get started</button>
+            </div>
+        </div>
+    </div>
+</dialog>

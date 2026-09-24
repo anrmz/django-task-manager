@@ -430,6 +430,10 @@ class UserSettings(models.Model):
         choices=DefaultView.choices,
         default=DefaultView.MY_DAY,
     )
+    onboarding_done = models.BooleanField(
+        default=False,
+        help_text="True once the guided first-run tour has been completed or skipped.",
+    )
 
     @classmethod
     def for_user(cls, user):

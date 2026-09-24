@@ -30,6 +30,9 @@ urlpatterns = [
     # Command palette + quick capture.
     path("palette/", views.palette_json, name="palette_json"),
     path("tasks/quick-add/", views.quick_add, name="quick_add"),
+    # First-run tour.
+    path("onboarding/complete/", views.onboarding_complete, name="onboarding_complete"),
+    path("onboarding/restart/", views.onboarding_restart, name="onboarding_restart"),
     # Task CRUD.
     path("tasks/create/", views.task_create, name="task_create"),
     path("tasks/<int:pk>/", views.task_detail, name="task_detail"),

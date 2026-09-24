@@ -614,6 +614,139 @@ class TaskManagerTests(TestCase):
         self.assertEqual(task.due_time.strftime("%H:%M"), "12:00")
         self.assertEqual(task.user, self.alice)
 
+    # --- onboarding tour: server-side state -----------------------------------
+
+    def _register(self, username="newbie"):
+        data = {
+            "username": username,
+            "email": f"{username}@example.com",
+            "password1": "Str0ng-Pass-2024",
+            "password2": "Str0ng-Pass-2024",
+        }
+        return self.client.post(reverse("register"), data)
+
+    def test_new_user_settings_default_to_not_onboarded(self):
+        self._register("newbie")
+        self.client.get(reverse("my_day"))  # nav context creates the settings row
+        row = UserSettings.objects.get(user__username="newbie")
+        self.assertFalse(row.onboarding_done)
+
+    def test_new_user_sees_tour_on_first_page(self):
+        self._register("newbie")
+        response = self.client.get(reverse("my_day"))
+        self.assertTrue(response.context["show_onboarding"])
+        self.assertContains(response, 'id="onboardingDialog"')
+        self.assertContains(response, "data-complete-url")
+
+    def test_existing_user_with_completed_tour_skips_it(self):
+        self._login()
+        row = UserSettings.for_user(self.alice)
+        row.onboarding_done = True
+        row.save(update_fields=["onboarding_done"])
+        response = self.client.get(reverse("my_day"))
+        self.assertFalse(response.context["show_onboarding"])
+        self.assertNotContains(response, 'id="onboardingDialog"')
+
+    def test_onboarding_complete_marks_done_via_xhr(self):
+        self._register("newbie")
+        response = self.client.post(
+            reverse("onboarding_complete"),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["ok"], True)
+        row = UserSettings.objects.get(user__username="newbie")
+        self.assertTrue(row.onboarding_done)
+
+    def test_onboarding_complete_requires_login(self):
+        response = self.client.post(reverse("onboarding_complete"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_onboarding_restart_re_enables_tour(self):
+        self._login()
+        row = UserSettings.for_user(self.alice)
+        row.onboarding_done = True
+        row.save(update_fields=["onboarding_done"])
+        response = self.client.post(reverse("onboarding_restart"))
+        self.assertRedirects(response, reverse("my_day"))
+        row = UserSettings.objects.get(user=self.alice)
+        self.assertFalse(row.onboarding_done)
+        page = self.client.get(reverse("my_day"))
+        self.assertTrue(page.context["show_onboarding"])
+
+    def test_onboarding_restart_is_post_only(self):
+        self._login()
+        response = self.client.get(reverse("onboarding_restart"))
+        self.assertEqual(response.status_code, 405)
+
+    # --- quotes ---------------------------------------------------------------
+
+    def test_quote_is_deterministic_and_bounded(self):
+        from .quotes import QUOTES, quote_for
+
+        base = date(2026, 1, 5)
+        for offset in range(0, 90):
+            q = quote_for(base + timedelta(days=offset))
+            self.assertEqual(len(q), 2)
+            self.assertIn(q, QUOTES)
+        self.assertEqual(quote_for(base), quote_for(base))
+        self.assertNotEqual(
+            quote_for(base), quote_for(base + timedelta(days=7))
+        )
+
+    def test_my_day_context_renders_quote_of_the_day(self):
+        from .quotes import quote_for
+
+        self._login()
+        response = self.client.get(reverse("my_day"))
+        text, author = quote_for()
+        self.assertContains(response, text)
+        self.assertContains(response, author)
+
+    # --- dashboard & analytics context ----------------------------------------
+
+    def test_my_day_renders_ring_and_next_up(self):
+        self._login()
+        self._make_task(
+            title="Due tomorrow thing",
+            due_date=timezone.localdate() + timedelta(days=1),
+        )
+        response = self.client.get(reverse("my_day"))
+        self.assertContains(response, "progress-card")
+        self.assertContains(response, "ring__bar")
+        self.assertContains(response, "Due tomorrow thing")
+
+    def test_productivity_empty_state_without_tasks(self):
+        self._login()
+        response = self.client.get(reverse("productivity"))
+        self.assertFalse(response.context["has_data"])
+        self.assertContains(response, "Your productivity, beautifully honest")
+
+    def test_productivity_renders_analytics_with_data(self):
+        self._login()
+        project = Project.objects.create(user=self.alice, name="Launch")
+        tag = Tag.objects.create(user=self.alice, name="ship")
+        for title, completed in [
+            ("A", True), ("B", True), ("C", True), ("D", False),
+        ]:
+            task = Task.objects.create(
+                user=self.alice, title=title, project=project,
+                priority=Task.Priority.MEDIUM,
+            )
+            if completed:
+                task.status = Task.Status.COMPLETED
+                task.completed_at = timezone.now()
+                task.save(update_fields=["status", "completed_at"])
+            task.tags.add(tag)
+
+        response = self.client.get(reverse("productivity"))
+        self.assertTrue(response.context["has_data"])
+        self.assertEqual(response.context["top_project"], project)
+        self.assertEqual(response.context["top_tag"], tag)
+        self.assertEqual(response.context["completion_rate"], 75)
+        self.assertContains(response, "Last 4 weeks")
+        self.assertContains(response, "Launch")
+
 
 
 @override_settings(

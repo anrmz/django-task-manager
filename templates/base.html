@@ -31,12 +31,15 @@
         <link rel="stylesheet" href="{% static 'css/insights.css' %}">
         <link rel="stylesheet" href="{% static 'css/modals.css' %}">
         <link rel="stylesheet" href="{% static 'css/editor.css' %}">
+        <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+        <link rel="stylesheet" href="{% static 'css/onboarding.css' %}">
         <link rel="stylesheet" href="{% static 'css/toasts.css' %}">
         <link rel="stylesheet" href="{% static 'css/auth.css' %}">
         <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
         {% block extra_css %}{% endblock %}
     </head>
     <body class="{% if prefs and prefs.density == 'compact' %}density--compact {% endif %}{% block body_class %}{% endblock %}">
+        <a class="skip-link" href="#main-content">Skip to content</a>
         {% if user.is_authenticated %}
         <script id="tm-config" type="application/json">
         {
@@ -60,6 +63,7 @@
 
         {% include "components/command_palette.html" %}
         {% include "components/quick_add.html" %}
+        {% if show_onboarding %}{% include "components/onboarding.html" %}{% endif %}
         {% endif %}
 
         {% include "components/toasts.html" %}
@@ -69,7 +73,7 @@
             {% include "components/topbar.html" %}
             <div class="app-body">
                 {% include "components/sidebar.html" %}
-                <main class="app-main" id="main">
+                <main class="app-main" id="main-content" tabindex="-1">
                     <div class="app-content">
                         {% block content %}{% endblock %}
                     </div>
@@ -97,6 +101,7 @@
         <script src="{% static 'js/navigation.js' %}"></script>
         <script src="{% static 'js/task-editor.js' %}"></script>
         <script src="{% static 'js/search.js' %}"></script>
+        {% if user.is_authenticated %}<script src="{% static 'js/onboarding.js' %}"></script>{% endif %}
         {% block extra_js %}{% endblock %}
     </body>
 </html>

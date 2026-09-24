@@ -26,7 +26,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.core.paginator import Paginator
 from django.db.models import Case, Count, IntegerField, Q, When
-from django.db.models.functions import TruncDate
+from django.db.models.functions import ExtractWeekDay, TruncDate
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -37,7 +37,8 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from .forms import ProjectForm, QuickAddForm, RegisterForm, TaskForm, UserPreferencesForm
-from .models import Project, Subtask, Task, TaskEvent, UserSettings, log_task_event
+from .models import Project, Subtask, Tag, Task, TaskEvent, UserSettings, log_task_event
+from .quotes import quote_for
 
 STATUS = Task.Status
 PRIORITY = Task.Priority
@@ -197,6 +198,30 @@ def _week_bounds(day=None):
     return monday, monday + timedelta(days=6)
 
 
+def _daily_counts(query, start, days):
+    """Total completions per weekday index 0..days-1 over ``[start, start+days)``.
+
+    Used by the productivity dashboard for weekly and multi-week bars; rows are
+    truncated to the local date so day boundaries follow the user's timezone.
+    """
+    counts = {i: 0 for i in range(days)}
+    rows = (
+        query.filter(
+            completed_at__isnull=False,
+            completed_at__date__gte=start,
+            completed_at__date__lt=start + timedelta(days=days),
+        )
+        .annotate(day=TruncDate("completed_at"))
+        .values("day")
+        .annotate(total=Count("id"))
+    )
+    for row in rows:
+        offset = (row["day"] - start).days
+        if 0 <= offset < days:
+            counts[offset] = row["total"]
+    return counts
+
+
 # ---------------------------------------------------------------------------
 # My Day — the heart of the product
 # ---------------------------------------------------------------------------
@@ -228,6 +253,17 @@ def my_day(request):
         status=STATUS.PENDING, due_date__gt=tomorrow, due_date__lte=today + timedelta(days=7)
     ).count()
 
+    week_start = today - timedelta(days=6)
+    week_completed = _daily_counts(base.filter(status=STATUS.COMPLETED), week_start, 7)
+    week_trend = [
+        {
+            "label": (week_start + timedelta(days=i)).strftime("%a"),
+            "count": week_completed[i],
+        }
+        for i in range(7)
+    ]
+    week_peak = max([d["count"] for d in week_trend] + [1])
+
     context = {
         "page": "my_day",
         "greeting": _greeting(request.user),
@@ -240,6 +276,9 @@ def my_day(request):
         "progress_done": completed_count,
         "progress_total": plate_total,
         "progress_pct": round((completed_count / plate_total) * 100) if plate_total else 0,
+        "quote": quote_for(today),
+        "week_trend": week_trend,
+        "week_peak": week_peak,
     }
     return render(request, "tasks/my_day.html", context)
 
@@ -1010,10 +1049,63 @@ def productivity(request):
     total = user_tasks.count()
     completion_rate = round((completed / total) * 100) if total else 0
     streak = _streak(user_tasks.filter(status=STATUS.COMPLETED))
+    completed_qs = user_tasks.filter(status=STATUS.COMPLETED)
 
     # 7-day completed trend (Mon→Sun), normalised for the bar chart.
-    trend = _weekly_trend(user_tasks.filter(status=STATUS.COMPLETED), monday)
+    trend = _weekly_trend(completed_qs, monday)
     peak = max([d["count"] for d in trend] + [1])
+
+    # Four most recent complete weeks (Mon–Sun) of completed tasks.
+    week_series = []
+    for back in (3, 2, 1, 0):
+        wmonday = monday - timedelta(days=7 * back)
+        wtotal = sum(_daily_counts(completed_qs, wmonday, 7).values())
+        week_series.append({
+            "label": f"{wmonday:%b %d}",
+            "count": wtotal,
+        })
+    week_peak = max([w["count"] for w in week_series] + [1])
+
+    # Created vs completed, one pair per day for the last 7 days.
+    trend_start = today - timedelta(days=6)
+    created_days = _daily_counts(user_tasks, trend_start, 7)
+    completed_days = _daily_counts(completed_qs, trend_start, 7)
+    days = [
+        {"label": (trend_start + timedelta(days=i)).strftime("%a"),
+         "created": created_days[i], "completed": completed_days[i]}
+        for i in range(7)
+    ]
+    days_peak = max([max(d["created"], d["completed"]) for d in days] + [1])
+
+    # All-time weekday pattern (ExtractWeekDay: 1=Sunday … 7=Saturday).
+    weekday_totals = {i: 0 for i in range(7)}
+    for row in (
+        completed_qs.annotate(wd=ExtractWeekDay("completed_at"))
+        .values("wd")
+        .annotate(n=Count("id"))
+    ):
+        weekday_totals[((row["wd"] + 5) % 7)] = row["n"]
+    weekday_labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    weekday = [
+        {"label": weekday_labels[i], "count": weekday_totals[i]}
+        for i in range(7)
+    ]
+    weekday_peak = max([d["count"] for d in weekday] + [1])
+    by_weekday = [(d["count"], d["label"]) for d in weekday]
+    best_weekday = max(by_weekday)[1] if any(count for count, _ in by_weekday) else None
+
+    top_project = (
+        Project.objects.filter(user=request.user, tasks__status=STATUS.COMPLETED)
+        .annotate(done=Count("tasks"))
+        .order_by("-done")
+        .first()
+    )
+    top_tag = (
+        Tag.objects.filter(user=request.user, tasks__status=STATUS.COMPLETED)
+        .annotate(done=Count("tasks"))
+        .order_by("-done")
+        .first()
+    )
 
     return render(request, "tasks/productivity.html", {
         "page": "productivity",
@@ -1029,7 +1121,51 @@ def productivity(request):
         "trend": trend,
         "peak": peak,
         "week_label": f"{monday:%b %d} – {sunday:%b %d}",
+        "has_data": total > 0,
+        "week_series": week_series,
+        "week_peak": week_peak,
+        "days": days,
+        "days_peak": days_peak,
+        "weekday": weekday,
+        "weekday_peak": weekday_peak,
+        "best_weekday": best_weekday,
+        "top_project": top_project,
+        "top_tag": top_tag,
+        "today_wd": today.weekday(),
     })
+
+
+# ---------------------------------------------------------------------------
+# Onboarding — the first-run guided tour
+# ---------------------------------------------------------------------------
+
+
+@login_required
+def onboarding_complete(request):
+    """Mark the guided tour as finished (used by Start/Cancel/Skip).
+
+    The state lives on the user's settings row so it is server-side only:
+    clearing the browser never re-shows it, and it can be restarted later.
+    """
+    settings_row = UserSettings.for_user(request.user)
+    if settings_row.onboarding_done is not True:
+        settings_row.onboarding_done = True
+        settings_row.save(update_fields=["onboarding_done"])
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        return JsonResponse({"ok": True})
+    messages.success(request, "Tour complete — your workspace is ready.")
+    return redirect(_safe_next(request, "my_day"))
+
+
+@login_required
+@require_POST
+def onboarding_restart(request):
+    """Re-enable the guided tour from Settings (POST only)."""
+    settings_row = UserSettings.for_user(request.user)
+    settings_row.onboarding_done = False
+    settings_row.save(update_fields=["onboarding_done"])
+    messages.success(request, "The tour will guide you through your workspace.")
+    return redirect(_safe_next(request, "my_day"))
 
 
 # ---------------------------------------------------------------------------

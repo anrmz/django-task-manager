@@ -73,6 +73,19 @@
 </div>
 
 <div class="side-form mt-16">
+    <h2>Getting started</h2>
+    <p class="small muted" style="margin-bottom:12px;">
+        Replay the guided tour that walks you through the workspace.
+    </p>
+    <form method="post" action="{% url 'onboarding_restart' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-soft" data-onboard-tour-restart>
+            {% icon 'sparkles' %}<span>Start onboarding tour</span>
+        </button>
+    </form>
+</div>
+
+<div class="side-form mt-16">
     <h2>Change password</h2>
     <p class="small muted" style="margin-bottom:14px;">
         Use at least 8 characters, not entirely numeric and not too common.

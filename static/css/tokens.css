@@ -34,6 +34,8 @@
     /* Focus rings + scrim */
     --ring: rgba(37, 99, 235, 0.35);
     --overlay: rgba(10, 10, 12, 0.42);
+    --spotlight: rgba(12, 15, 22, 0.66);
+    --spotlight-strong: rgba(12, 15, 22, 0.85);
 
     /* Semantics */
     --success: #059669;
@@ -95,6 +97,8 @@
 
     --ring: rgba(107, 159, 255, 0.4);
     --overlay: rgba(0, 0, 0, 0.6);
+    --spotlight: rgba(0, 0, 0, 0.72);
+    --spotlight-strong: rgba(0, 0, 0, 0.86);
 
     --success: #34d399;
     --success-soft: #0d2b22;

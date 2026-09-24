@@ -112,13 +112,16 @@
 }
 
 /* Tone helpers (used sparingly) */
-.tone-danger .metric-card__value {
+.tone-danger .metric-card__value,
+.tone-danger .stat-card__value {
     color: var(--danger);
 }
-.tone-success .metric-card__value {
+.tone-success .metric-card__value,
+.tone-success .stat-card__value {
     color: var(--success);
 }
-.tone-warning .metric-card__value {
+.tone-warning .metric-card__value,
+.tone-warning .stat-card__value {
     color: var(--warning);
 }
 

@@ -1,0 +1,210 @@
+/* ==========================================================================
+   Task Manager · Onboarding tour — spotlight overlay, step card, bottom sheet
+   ========================================================================== */
+
+dialog.onboarding-overlay {
+    background: transparent;
+    overflow: hidden;
+}
+
+/* ---- Spotlight "hole" ---------------------------------------------------- */
+
+.tour__spotlight {
+    position: fixed;
+    left: var(--spot-x, 0px);
+    top: var(--spot-y, 0px);
+    width: var(--spot-w, 0px);
+    height: var(--spot-h, 0px);
+    border-radius: 12px;
+    border: 1.5px solid var(--primary);
+    box-shadow: 0 0 0 2px var(--primary),
+        0 0 0 4px var(--ring),
+        0 0 0 100vmax var(--spotlight);
+    transition: left 260ms var(--ease), top 260ms var(--ease),
+        width 260ms var(--ease), height 260ms var(--ease);
+    pointer-events: none;
+    z-index: 120;
+}
+
+/* ---- Step card ----------------------------------------------------------- */
+
+.tour__card {
+    position: fixed;
+    z-index: 130;
+    width: min(380px, calc(100vw - 32px));
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    animation: tour-card-in 220ms var(--ease) both;
+}
+
+/* Default: card sits to the right of the spotlight */
+.tour__card {
+    left: calc(var(--spot-x, 0px) + var(--spot-w, 0px) + 18px);
+    top: var(--spot-y, 0px);
+}
+.tour--mirror .tour__card {
+    left: calc(var(--spot-x, 0px) - 18px);
+    transform: translateX(-100%);
+}
+.tour--centered .tour__card {
+    left: 50%;
+    top: 48%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes tour-card-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.985);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+.tour--centered .tour__card {
+    animation-name: tour-card-pop;
+}
+@keyframes tour-card-pop {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -46%) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.tour__step-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 6px;
+}
+.tour__title {
+    font-size: 19px;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+.tour__body {
+    margin-top: 8px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--muted);
+}
+.tour__hint {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--faint);
+}
+
+/* Media (illustration) */
+.tour__media {
+    display: grid;
+    place-items: center;
+    height: 84px;
+    margin-bottom: 14px;
+    border-radius: var(--radius-md);
+    background:
+        radial-gradient(120% 160% at 20% 0%, var(--primary-soft), transparent 60%),
+        var(--surface-2);
+    color: var(--primary);
+    overflow: hidden;
+}
+.tour__media svg {
+    width: 60px;
+    height: 60px;
+}
+
+/* Dots */
+.tour__points {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 16px 0;
+}
+.tour__points span {
+    width: 6px;
+    height: 6px;
+    border-radius: 99px;
+    background: var(--surface-3);
+    transition: width 220ms var(--ease), background var(--t-fast);
+}
+.tour__points span.is-active {
+    width: 20px;
+    background: var(--primary);
+}
+
+/* Actions */
+.tour__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.tour__spacer {
+    flex: 1;
+}
+
+/* ---- Step illustrations (inline SVG scenes) ------------------------------ */
+
+.tour-art {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.tour-art__soft {
+    opacity: 0.28;
+}
+
+/* ---- Mobile: hiding the spotlight, tour becomes a bottom sheet ----------- */
+
+@media (max-width: 720px) {
+    .tour__spotlight {
+        display: none;
+    }
+    .tour--mirror .tour__card,
+    .tour__card {
+        left: 0;
+        right: 0;
+        top: auto;
+        bottom: 0;
+        width: 100%;
+        transform: none;
+        border-radius: 18px 18px 0 0;
+        border-left: 0;
+        border-right: 0;
+        border-bottom: 0;
+        animation-name: tour-sheet-up;
+        padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    }
+    .tour__media {
+        height: 72px;
+    }
+}
+
+@keyframes tour-sheet-up {
+    from {
+        opacity: 0;
+        transform: translateY(60px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tour__spotlight,
+    .tour__card {
+        transition: none;
+    }
+}

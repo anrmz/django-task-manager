@@ -103,14 +103,21 @@
         activeIndex = -1;
         var groups = [];
 
+        var actions = [
+            { label: "New task", sub: "Open the quick capture", icon: "plus", run: function () { if (TM.openQuickAdd) TM.openQuickAdd(); } },
+            { label: "Toggle theme", sub: "Light / dark / system", icon: "appearance", run: function () { if (TM.toggleTheme) TM.toggleTheme(); } },
+            { label: "Keyboard shortcuts", sub: "See every shortcut", icon: "keyboard", run: function () { openShortcuts(); } },
+        ];
+        if (document.getElementById("onboardingDialog")) {
+            actions.push({
+                label: "Start tour", sub: "Replay the welcome tour", icon: "sparkles",
+                run: function () { if (TM.startTour) TM.startTour(); },
+            });
+        }
         groups.push({
             type: "actions",
             title: "Actions",
-            items: [
-                { label: "New task", sub: "Open the quick capture", icon: "plus", run: function () { if (TM.openQuickAdd) TM.openQuickAdd(); } },
-                { label: "Toggle theme", sub: "Light / dark / system", icon: "appearance", run: function () { if (TM.toggleTheme) TM.toggleTheme(); } },
-                { label: "Keyboard shortcuts", sub: "See every shortcut", icon: "keyboard", run: function () { openShortcuts(); } },
-            ],
+            items: actions,
         });
 
         var nav = (config && config.nav) || [];

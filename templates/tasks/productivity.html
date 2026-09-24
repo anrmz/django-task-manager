@@ -6,11 +6,13 @@
 <div class="page-head">
     <div class="title-block">
         <h1 class="page-title">Productivity</h1>
-        <p class="page-sub">Real numbers from your completed tasks — nothing is estimated.</p>
+        <p class="page-sub">Real numbers from your completed tasks &mdash; nothing is estimated.</p>
     </div>
     <div class="page-head-actions">
         {% if streak %}
-        <span class="streak-chip">{% icon 'trophy' size="14" %}{{ streak }}-day streak</span>
+        <span class="streak-chip" title="Consecutive days with at least one completed task">
+            {% icon 'trophy' size="14" %}{{ streak }}-day streak
+        </span>
         {% endif %}
         <button type="button" class="btn btn-primary js-quick-add-open">
             {% icon 'plus' %}<span>Add task</span>
@@ -18,73 +20,216 @@
     </div>
 </div>
 
-<div class="kpi-card">
-    <div class="kpi-card__value">{{ completion_rate }}%</div>
-    <div class="kpi-card__label">Overall completion rate</div>
-    <div class="kpi-card__sub">Every task you have ever created, completed or not.</div>
-</div>
+{% if has_data %}
+<div class="insight-grid">
 
-<div class="stats-grid mt-16">
-    <div class="stat-card">
-        <span class="stat-card__label">{% icon 'zap' %}Completed today</span>
-        <span class="stat-card__value">{{ completed_today }}</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-card__label">{% icon 'calendar' %}Completed this week</span>
-        <span class="stat-card__value">{{ completed_week }}</span>
-        <span class="stat-card__sub">{{ week_label }}</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-card__label">{% icon 'target' %}Completed this month</span>
-        <span class="stat-card__value">{{ completed_month }}</span>
-        <span class="stat-card__sub">{{ today|date:"F Y" }}</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-card__label">{% icon 'circle' %}Open tasks</span>
-        <span class="stat-card__value">{{ pending }}</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-card__label">{% icon 'alert' %}Overdue</span>
-        <span class="stat-card__value" {% if overdue %}style="color: var(--danger);"{% endif %}>{{ overdue }}</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-card__label">{% icon 'plus' %}Created this month</span>
-        <span class="stat-card__value">{{ created_month }}</span>
-    </div>
-</div>
-
-<div class="insight-row">
-    <section class="dash-card trend-card span-8" aria-label="Weekly trend">
-        <div class="dash-card__head">
-            <h2>Tasks completed</h2>
-            <span class="small faint">{{ week_label }}</span>
-        </div>
-        <div class="trend-bars" style="margin-top: 6px;">
-            {% for day in trend %}
-            <div class="trend-col">
-                {% if day.count %}
-                <div class="trend-col__value">{{ day.count }}</div>
-                <div class="trend-col__track">
-                    <div class="trend-col__bar" style="height: {% widthratio day.count peak 100 %}%;" title="{{ day.label }}: {{ day.count }}"></div>
-                </div>
-                {% else %}
-                <div class="trend-col__value">&nbsp;</div>
-                <div class="trend-col__track"></div>
-                {% endif %}
-                <div class="trend-col__day">{{ day.label }}</div>
+    <section class="dash-card kpi-ring-card" aria-label="Overall completion rate">
+        <div class="ring-wrap">
+            <svg class="ring ring--lg" viewBox="0 0 120 120" role="img" aria-label="Completion rate {{ completion_rate }} percent">
+                <circle class="ring__track" cx="60" cy="60" r="52"></circle>
+                <circle class="ring__bar" cx="60" cy="60" r="52" style="--pct: {{ completion_rate }}"></circle>
+            </svg>
+            <div class="ring-center">
+                <span class="ring-center__value">{{ completion_rate }}%</span>
             </div>
-            {% endfor %}
+        </div>
+        <div class="ring-aside">
+            <p class="ring-aside__title">Completion rate</p>
+            <p class="ring-aside__sub">Take a task to &ldquo;done&rdquo; and it counts here forever.</p>
+            <div class="progress" style="--pct: {{ completion_rate }}%"><span></span></div>
         </div>
     </section>
 
-    <section class="dash-card span-4" aria-label="Streak">
-        <div class="dash-card__head"><h2>Day streak</h2></div>
-        <div class="dash-card__body">
-            <div class="kpi-card__value" style="font-size:34px;">{{ streak }}</div>
-            <p class="small muted" style="margin-top:6px;">
-                Consecutive days with at least one completed task. Miss a day and it starts over.
-            </p>
+    <div class="stats-grid stats-grid--padded">
+        <div class="stat-card">
+            <span class="stat-card__label">{% icon 'zap' %}Completed today</span>
+            <span class="stat-card__value">{{ completed_today }}</span>
+            <span class="stat-card__sub">Keep the run going.</span>
         </div>
-    </section>
+        <div class="stat-card">
+            <span class="stat-card__label">{% icon 'calendar' %}This week</span>
+            <span class="stat-card__value">{{ completed_week }}</span>
+            <span class="stat-card__sub">{{ week_label }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-card__label">{% icon 'list' %}This month</span>
+            <span class="stat-card__value">{{ completed_month }}</span>
+            <span class="stat-card__sub">{{ today|date:"F Y" }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-card__label">{% icon 'circle' %}Open tasks</span>
+            <span class="stat-card__value">{{ pending }}</span>
+        </div>
+        <div class="stat-card {% if overdue %}tone-danger{% endif %}">
+            <span class="stat-card__label">{% icon 'alert' %}Overdue</span>
+            <span class="stat-card__value">{{ overdue }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-card__label">{% icon 'plus' %}Created this month</span>
+            <span class="stat-card__value">{{ created_month }}</span>
+        </div>
+    </div>
+
+    <div class="insight-row">
+        <section class="dash-card trend-card span-8" aria-label="Tasks completed this week">
+            <div class="dash-card__head">
+                <h2>Completed this week</h2>
+                <span class="small faint">{{ week_label }}</span>
+            </div>
+            <div class="trend-bars" style="margin-top: 6px;">
+                {% for day in trend %}
+                <div class="trend-col">
+                    {% if day.count %}
+                    <div class="trend-col__value">{{ day.count }}</div>
+                    <div class="trend-col__track">
+                        <div class="trend-col__bar" style="height: {% widthratio day.count peak 100 %}%;" title="{{ day.label }}: {{ day.count }}"></div>
+                    </div>
+                    {% else %}
+                    <div class="trend-col__value">&nbsp;</div>
+                    <div class="trend-col__track"></div>
+                    {% endif %}
+                    <div class="trend-col__day">{{ day.label }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="dash-card span-4" aria-label="Day streak">
+            <div class="dash-card__head">
+                <h2>Day streak</h2>
+                {% if streak %}<span class="streak-chip" style="font-size:12px;">{% icon 'trophy' size="12" %}{{ streak }}</span>{% endif %}
+            </div>
+            <div class="dash-card__body">
+                <div class="kpi-card__value" style="font-size:34px;">{{ streak }}</div>
+                <p class="small muted" style="margin-top:6px;">
+                    Consecutive days with at least one completed task. Miss a day and it starts over.
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <div class="insight-row">
+        <section class="dash-card span-8" aria-label="Last four weeks">
+            <div class="dash-card__head">
+                <h2>Last 4 weeks</h2>
+                <span class="small faint">Tasks completed per week</span>
+            </div>
+            <div class="dash-card__body">
+                <div class="bars-compare">
+                    {% for week in week_series %}
+                    <div class="bars-compare__col">
+                        <span class="bars-compare__value">{{ week.count }}</span>
+                        <div class="bars-compare__track">
+                            <div class="bars-compare__bar{% if forloop.last %} is-current{% endif %}"
+                                 style="height: {% widthratio week.count week_peak 100 %}%;"
+                                 title="{{ week.label }}: {{ week.count }}"></div>
+                        </div>
+                        <span class="bars-compare__label">{{ week.label }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section class="dash-card span-4" aria-label="Weekday rhythm">
+            <div class="dash-card__head">
+                <h2>Weekday rhythm</h2>
+            </div>
+            <div class="dash-card__body">
+                <div class="weekday-bars">
+                    {% for d in weekday %}
+                    <div class="weekday-col">
+                        <div class="weekday-col__track">
+                            {% if d.count %}
+                            <div class="weekday-col__fill" style="height: {% widthratio d.count weekday_peak 100 %}%;"
+                                 title="{{ d.label }}: {{ d.count }}"></div>
+                            {% endif %}
+                        </div>
+                        <span class="weekday-col__label{% if forloop.counter0 == today_wd %} is-today{% endif %}">{{ d.label|slice:":1" }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if best_weekday %}
+                <p class="small muted" style="margin-top:10px;">
+                    Your most productive day is <strong>{{ best_weekday }}</strong>.
+                </p>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+
+    <div class="insight-row">
+        <section class="dash-card span-6" aria-label="Created versus completed this week">
+            <div class="dash-card__head">
+                <h2>Created vs completed</h2>
+                <span class="small faint">Last 7 days</span>
+            </div>
+            <div class="dash-card__body">
+                <div class="dual-bars">
+                    <div class="dual-bars__chart">
+                        {% for d in days %}
+                        <div class="dual-col">
+                            <div class="dual-col__track">
+                                <div class="dual-col__bar is-created" style="height: {% widthratio d.created days_peak 100 %}%;" title="{{ d.label }}: {{ d.created }} created"></div>
+                                <div class="dual-col__bar is-completed" style="height: {% widthratio d.completed days_peak 100 %}%;" title="{{ d.label }}: {{ d.completed }} completed"></div>
+                            </div>
+                            <span class="dual-col__label">{{ d.label|slice:":1" }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="dual-bars__legend">
+                        <span class="dual-legend"><i class="dot is-created"></i>Created</span>
+                        <span class="dual-legend"><i class="dot is-completed"></i>Completed</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="dash-card span-6" aria-label="Favourites">
+            <div class="dash-card__head">
+                <h2>Favourites</h2>
+                <span class="small faint">Most completed</span>
+            </div>
+            <div class="dash-card__body">
+                <div class="fav-list">
+                    <div class="fav-row">
+                        <span class="fav-row__icon">{% icon 'folder' %}</span>
+                        <div class="fav-row__main">
+                            <span class="fav-row__label">Top project</span>
+                            {% if top_project %}
+                            <span class="fav-row__name"><span class="dot" style="background: {{ top_project.color }}"></span>{{ top_project.name }}</span>
+                            {% else %}
+                            <span class="fav-row__name is-empty">No project used yet</span>
+                            {% endif %}
+                        </div>
+                        {% if top_project %}<span class="fav-row__count">{{ top_project.done }}</span>{% endif %}
+                    </div>
+                    <div class="fav-row">
+                        <span class="fav-row__icon">{% icon 'tag' %}</span>
+                        <div class="fav-row__main">
+                            <span class="fav-row__label">Top tag</span>
+                            {% if top_tag %}
+                            <span class="fav-row__name"><span class="dot" style="background: {{ top_tag.color }}"></span>#{{ top_tag.name }}</span>
+                            {% else %}
+                            <span class="fav-row__name is-empty">No tags used yet</span>
+                            {% endif %}
+                        </div>
+                        {% if top_tag %}<span class="fav-row__count">{{ top_tag.done }}</span>{% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
 </div>
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">{% icon 'chart' size="22" %}</span>
+    <h2>Your productivity, beautifully honest</h2>
+    <p>Complete your first task and this page turns into a dashboard &mdash; streaks, weekly trends and your most-used project.</p>
+    <button type="button" class="btn btn-primary js-quick-add-open">
+        {% icon 'plus' %}<span>Add your first task</span>
+    </button>
+</div>
+{% endif %}
 {% endblock %}

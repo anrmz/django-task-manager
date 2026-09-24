@@ -4,6 +4,7 @@
         <div class="side-section">
             <p class="side-label">Focus</p>
             <a href="{% url 'my_day' %}" class="side-link {% if nav.page == 'my_day' %}active{% endif %}"
+               data-onboard="nav"
                title="My Day" aria-label="My Day">
                 {% icon 'sun' %}
                 <span class="side-text">My Day</span>

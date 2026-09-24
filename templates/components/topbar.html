@@ -10,6 +10,7 @@
     </a>
 
     <button type="button" class="header-search js-palette-open"
+            data-onboard="palette"
             aria-label="Search tasks, projects and tags">
         {% icon 'search' %}
         <span class="placeholder">Search&hellip;</span>
@@ -19,7 +20,7 @@
     <span class="header-spacer"></span>
 
     <div class="header-actions">
-        <button type="button" class="btn btn-primary js-quick-add-open">
+        <button type="button" class="btn btn-primary js-quick-add-open" data-onboard="add-task">
             {% icon 'plus' %}
             <span>Add task</span>
         </button>
@@ -29,7 +30,7 @@
         </button>
 
         <div class="dropdown js-dropdown" id="themeMenu">
-            <button type="button" class="icon-btn js-dropdown-btn" aria-label="Appearance" aria-haspopup="menu">
+            <button type="button" class="icon-btn js-dropdown-btn" aria-label="Appearance" aria-haspopup="menu" data-onboard="theme">
                 {% icon 'appearance' %}
             </button>
             <div class="dropdown-panel hidden js-dropdown-menu" role="menu" aria-label="Appearance">

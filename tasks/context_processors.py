@@ -72,4 +72,4 @@ def nav(request):
     }
 
     prefs = UserSettings.for_user(user)
-    return {"nav": nav, "prefs": prefs}
+    return {"nav": nav, "prefs": prefs, "show_onboarding": not prefs.onboarding_done}

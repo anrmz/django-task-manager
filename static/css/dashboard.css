@@ -1,0 +1,563 @@
+/* ==========================================================================
+   Task Manager · Dashboard — My Day redesign, progress ring, quote card,
+   "at a glance" rail, mini charts, productivity analytics components.
+   ========================================================================== */
+
+/* ---- My Day layout: main column + side rail ----------------------------- */
+
+.dash {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 264px;
+    gap: 16px;
+    align-items: start;
+}
+.dash-main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+.dash-side {
+    position: sticky;
+    top: 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ---- Progress ring ------------------------------------------------------ */
+
+.ring-card {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    padding: 20px 22px;
+    background:
+        radial-gradient(120% 140% at 0% 0%, var(--primary-soft), transparent 55%),
+        var(--surface);
+}
+
+.ring-wrap {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    flex: none;
+}
+.ring {
+    display: block;
+    width: 76px;
+    height: 76px;
+    transform: rotate(-90deg);
+    overflow: visible;
+}
+.ring--lg {
+    width: 96px;
+    height: 96px;
+}
+.ring__track {
+    fill: none;
+    stroke: var(--surface-3);
+    stroke-width: 10;
+}
+.ring__bar {
+    fill: none;
+    stroke: var(--primary);
+    stroke-width: 10;
+    stroke-linecap: round;
+    stroke-dasharray: calc((var(--pct) / 100) * 326.73) 326.73;
+    transition: stroke-dasharray 500ms var(--ease), stroke 180ms var(--ease);
+}
+.ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    text-align: center;
+}
+.ring-center__value {
+    font-size: 22px;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+.ring-center__label {
+    margin-top: 2px;
+    font-size: 10px;
+    color: var(--faint);
+    white-space: nowrap;
+}
+.ring--lg + .ring-center .ring-center__value {
+    font-size: 26px;
+}
+
+.ring-aside {
+    min-width: 0;
+    flex: 1;
+}
+.ring-aside__title {
+    font-size: 16.5px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text);
+}
+.ring-aside__sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 3px;
+}
+.ring-aside .progress {
+    margin-top: 12px;
+}
+
+/* ---- Quote of the day --------------------------------------------------- */
+
+.quote-card {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+}
+.quote-card__mark {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    flex: none;
+    border-radius: 9px;
+    background: linear-gradient(180deg, var(--warning-soft), var(--surface-2));
+    color: var(--warning);
+}
+.quote-card__mark .icon {
+    width: 15px;
+    height: 15px;
+}
+.quote-card__text {
+    min-width: 0;
+}
+.quote-card__body {
+    font-size: 13.5px;
+    font-weight: 550;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+.quote-card__who {
+    font-size: 12px;
+    color: var(--faint);
+    margin-top: 3px;
+}
+
+.empty-quote {
+    margin: 18px auto 0;
+    max-width: 30em;
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+}
+.empty-quote span {
+    display: block;
+    color: var(--faint);
+}
+
+/* ---- "At a glance" rows ------------------------------------------------- */
+
+.dash-card--side {
+    box-shadow: var(--shadow-sm);
+}
+.dash-card--side .dash-card__body {
+    padding-top: 8px;
+}
+.glance {
+    display: flex;
+    flex-direction: column;
+}
+.glance-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 2px;
+    border-bottom: 1px solid var(--border);
+}
+.glance-row:last-child {
+    border-bottom: 0;
+}
+.glance-row__key {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 550;
+}
+.glance-row__key .icon {
+    width: 15px;
+    height: 15px;
+    color: var(--faint);
+}
+.glance-row__val {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+.glance-row--alert .glance-row__val {
+    color: var(--danger);
+}
+
+/* ---- Mini 7-day chart (My Day) ------------------------------------------ */
+
+.mini-chart {
+    display: flex;
+    flex-direction: column;
+}
+.mini-chart__bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    height: 56px;
+}
+.mini-chart__col {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+}
+.mini-chart__fill {
+    width: 100%;
+    border-radius: 4px 4px 2px 2px;
+    background: var(--primary-soft);
+    transition: height 320ms var(--ease), background var(--t-fast);
+}
+.mini-chart__col:hover .mini-chart__fill {
+    background: var(--primary);
+}
+.mini-chart__labels {
+    display: flex;
+    gap: 5px;
+    margin-top: 5px;
+}
+.mini-chart__labels span {
+    flex: 1;
+    text-align: center;
+    font-size: 10px;
+    color: var(--faint);
+}
+
+/* ---- Productivity page shell -------------------------------------------- */
+
+.insight-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 16px;
+}
+.insight-grid > .kpi-ring-card,
+.insight-grid > .stats-grid,
+.insight-grid > .insight-row {
+    grid-column: 1 / -1;
+}
+
+/* Completion-rate hero */
+.kpi-ring-card {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 20px 22px;
+    background:
+        radial-gradient(120% 150% at 100% 0%, var(--primary-soft), transparent 55%),
+        var(--surface);
+}
+.kpi-ring-card .ring-wrap {
+    width: 96px;
+    height: 96px;
+}
+
+/* ---- 4-week comparison bars --------------------------------------------- */
+
+.bars-compare {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    align-items: stretch;
+    margin-top: 8px;
+    height: 150px;
+}
+.bars-compare__col {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+.bars-compare__value {
+    font-size: 13px;
+    font-weight: 650;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+.bars-compare__track {
+    width: 100%;
+    max-width: 56px;
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    border-radius: 6px;
+    background: var(--surface-2);
+    overflow: hidden;
+}
+.bars-compare__bar {
+    width: 100%;
+    border-radius: 6px;
+    background: var(--secondary, var(--primary-soft));
+    transition: height 320ms var(--ease);
+}
+.bars-compare__bar.is-current {
+    background: var(--primary);
+}
+.bars-compare__col:hover .bars-compare__bar {
+    background: var(--primary-hover);
+}
+.bars-compare__label {
+    font-size: 11.5px;
+    color: var(--faint);
+    white-space: nowrap;
+}
+
+/* ---- Weekday rhythm ----------------------------------------------------- */
+
+.weekday-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 96px;
+    margin-top: 8px;
+}
+.weekday-col {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    min-width: 0;
+}
+.weekday-col__track {
+    width: 100%;
+    max-width: 30px;
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    border-radius: 5px;
+    background: var(--surface-2);
+    overflow: hidden;
+}
+.weekday-col__fill {
+    width: 100%;
+    border-radius: 5px;
+    background: var(--primary-soft);
+    transition: height 320ms var(--ease), background var(--t-fast);
+}
+.weekday-col__label {
+    font-size: 10.5px;
+    color: var(--faint);
+}
+.weekday-col__label.is-today {
+    color: var(--primary);
+    font-weight: 750;
+}
+.weekday-col:hover .weekday-col__fill {
+    background: var(--primary);
+}
+
+/* ---- Created vs completed (dual bars) ------------------------------------ */
+
+.dual-bars {
+    margin-top: 8px;
+}
+.dual-bars__chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 118px;
+}
+.dual-col {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    min-width: 0;
+}
+.dual-col__track {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 3px;
+}
+.dual-col__bar {
+    width: 36%;
+    max-width: 16px;
+    border-radius: 4px 4px 1px 1px;
+    transition: height 320ms var(--ease);
+}
+.dual-col__bar.is-created {
+    background: var(--secondary, var(--surface-3));
+}
+.dual-col__bar.is-completed {
+    background: var(--primary);
+}
+.dual-col__label {
+    font-size: 10.5px;
+    color: var(--faint);
+}
+.dual-bars__legend {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 10px;
+}
+.dual-legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--muted);
+}
+.dual-legend .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 3px;
+    background: var(--surface-3);
+}
+.dual-legend .dot.is-completed {
+    background: var(--primary);
+}
+
+/* ---- Favourites --------------------------------------------------------- */
+
+.fav-list {
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+}
+.fav-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 2px;
+    border-bottom: 1px solid var(--border);
+}
+.fav-row:last-child {
+    border-bottom: 0;
+}
+.fav-row__icon {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    border-radius: 9px;
+    background: var(--surface-2);
+    color: var(--muted);
+}
+.fav-row__icon .icon {
+    width: 16px;
+    height: 16px;
+}
+.fav-row__main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.fav-row__label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--faint);
+}
+.fav-row__name {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.fav-row__name .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex: none;
+}
+.fav-row__name.is-empty {
+    color: var(--faint);
+    font-weight: 450;
+}
+.fav-row__count {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---- Responsive --------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+    .dash {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .dash-side {
+        position: static;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .dash-side {
+        display: flex;
+    }
+    .ring-card,
+    .kpi-ring-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 18px 16px;
+    }
+    .ring-wrap,
+    .ring--lg,
+    .kpi-ring-card .ring-wrap {
+        width: 72px;
+        height: 72px;
+    }
+    .ring--lg,
+    .kpi-ring-card .ring {
+        width: 72px;
+        height: 72px;
+    }
+    .bars-compare {
+        gap: 8px;
+    }
+    .fav-row__count {
+        font-size: 14px;
+    }
+}
