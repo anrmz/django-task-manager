@@ -9,7 +9,10 @@ Configuration is read from environment variables — supported names are the
 plain form documented in ``.env.example`` (``SECRET_KEY``, ``DEBUG``,
 ``ALLOWED_HOSTS``, ``CSRF_TRUSTED_ORIGINS``, ``DATABASE_URL``…) with the older
 ``DJANGO_*`` aliases still accepted.  A tiny zero-dependency loader reads a
-gitignored ``.env`` file; real shell environment variables always win.
+gitignored ``.env`` file; real shell environment variables always win.  On
+Vercel, system variables (``VERCEL``, ``VERCEL_ENV``, ``VERCEL_URL``,
+``VERCEL_BRANCH_URL``, ``VERCEL_PROJECT_PRODUCTION_URL``) are picked up
+automatically for host/origin allowlisting.
 """
 
 import os
@@ -62,7 +65,14 @@ _load_env_file(BASE_DIR / ".env")
 # SECURITY WARNING: keep the secret key used in production secret!
 # Production refuses to start without a strong explicit value.
 SECRET_KEY = _get_env("SECRET_KEY")
-DEBUG = _env_bool(_get_env("DEBUG"), default=True)
+
+# Vercel injects system environment variables (VERCEL=1, VERCEL_ENV, and the
+# scheme-less deployment hostnames VERCEL_URL / VERCEL_BRANCH_URL /
+# VERCEL_PROJECT_PRODUCTION_URL) at build and runtime. Detect it so DEBUG
+# defaults to OFF on Vercel even if it is forgotten in the dashboard.
+_on_vercel = os.environ.get("VERCEL") == "1" or bool(os.environ.get("VERCEL_ENV"))
+
+DEBUG = _env_bool(_get_env("DEBUG"), default=not _on_vercel)
 
 if not SECRET_KEY and DEBUG:
     # Development-only fallback so the app runs out of the box. Never use this
@@ -75,19 +85,53 @@ if not SECRET_KEY or (not DEBUG and (len(SECRET_KEY) < 50 or "django-insecure-" 
         "  python -c \"import secrets; print(secrets.token_urlsafe(64))\""
     )
 
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in (_get_env("ALLOWED_HOSTS") or "127.0.0.1,localhost").split(",")
-    if host.strip()
-]
 
-# Trusted origins for cross-site requests (CSRF) — assign the real Render /
-# custom domain here in production, e.g. "https://app.yourapp.onrender.com".
+def _vercel_hosts():
+    """Return scheme-less hostnames Vercel injects as system environment
+    variables (production domain, branch URL, per-deployment URL).
+
+    These exist only at build/runtime on Vercel, so the merged hostnames never
+    leak into local development or other platforms. Values are sanitized
+    defensively (scheme and path stripped) even though Vercel ships them
+    scheme-less.
+    """
+    hosts = []
+    for key in ("VERCEL_PROJECT_PRODUCTION_URL", "VERCEL_BRANCH_URL", "VERCEL_URL"):
+        value = os.environ.get(key)
+        if not value:
+            continue
+        value = value.strip().lower()
+        if "://" in value:
+            value = value.split("://", 1)[1]
+        value = value.split("/", 1)[0]
+        value = value.split(":", 1)[0]
+        if value and value not in hosts:
+            hosts.append(value)
+    return hosts
+
+
+_vercel_hostnames = _vercel_hosts()
+
+ALLOWED_HOSTS = list(
+    dict.fromkeys(
+        [
+            host.strip()
+            for host in (_get_env("ALLOWED_HOSTS") or "127.0.0.1,localhost").split(",")
+            if host.strip()
+        ]
+        + _vercel_hostnames
+    )
+)
+
+# Trusted origins for cross-site requests (CSRF) — assign the real production /
+# custom domains here, e.g. "https://app.yourapp.onrender.com". Vercel's
+# deployment and branch hostnames are added automatically so any Vercel URL the
+# project is served from can accept POST requests.
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in (_get_env("CSRF_TRUSTED_ORIGINS") or "").split(",")
     if origin.strip()
-]
+] + [f"https://{host}" for host in _vercel_hostnames]
 
 
 # Application definition
@@ -194,7 +238,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
-STATIC_URL = "static/"
+# Absolute (leading slash) so ``{% static %}`` URLs resolve correctly from
+# nested routes (e.g. ``/tasks/1/edit/``) and map directly onto WhiteNoise
+# and Vercel's CDN path for collected files.
+STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
@@ -227,8 +274,9 @@ LOGOUT_REDIRECT_URL = "login"
 # configurable through ``SECURE_HSTS_SECONDS`` (0 disables it) — enable HSTS
 # only once you know the exact domain(s) the app will be served from.
 if not DEBUG:
-    # Render and other TLS-terminating proxies forward the original scheme in
-    # this header. Never trust it in development where clients could spoof it.
+    # Render and Vercel (other TLS-terminating proxies) forward the original
+    # scheme in this header. Never trust it in development where clients could
+    # spoof it.
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 SECURE_SSL_REDIRECT = _env_bool(_get_env("SECURE_SSL_REDIRECT"), default=not DEBUG)

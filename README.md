@@ -11,7 +11,8 @@ scoped to the signed-in user: another user's data is always a **404**, never a
 leak.
 
 The project runs identically in local development (SQLite, console email) and
-in production (PostgreSQL, SMTP email, Gunicorn + WhiteNoise).
+in production (PostgreSQL, SMTP email, Gunicorn + WhiteNoise on Render, or the
+WSGI entry point behind Vercel's functions + CDN).
 
 ---
 
@@ -146,7 +147,10 @@ python manage.py collectstatic --noinput
 - **Development:** Django serves directly from `static/`.
 - **Production:** WhiteNoise serves from `STATIC_ROOT` with fingerprinting
   (`whitenoise.storage.CompressedManifestStaticFilesStorage`), so no separate
-  web server configuration is required.
+  web server configuration is required. On Vercel, `collectstatic` runs
+  automatically and the collected files are served from the CDN at `/static/`
+  (absolute `STATIC_URL`, so assets load correctly from nested routes like
+  `/tasks/1/edit/`).
 
 ---
 
@@ -168,8 +172,10 @@ python manage.py check --deploy
 
 The repository is deployment-ready: PostgreSQL via `DATABASE_URL`, Gunicorn
 (`gunicorn taskmanager.wsgi:application`), WhiteNoise static serving,
-`build.sh` build script, and an optional `render.yaml` blueprint. **The app has
-not been deployed yet** — the steps below are what a first deployment requires.
+`build.sh` build script, and an optional `render.yaml` blueprint, plus a
+minimal `vercel.json` for deploying on Vercel's zero-config Django support.
+**The app has not been deployed yet** — the steps below are what a first
+deployment requires.
 
 ### Render (when you're ready)
 
@@ -183,6 +189,29 @@ not been deployed yet** — the steps below are what a first deployment requires
 5. After the first deploy, replace the placeholder SMTP values with real
    credentials and set `ALLOWED_HOSTS`/`CSRF_TRUSTED_ORIGINS` to the assigned
    `*.onrender.com` URL (or a custom domain).
+
+### Vercel (when you're ready)
+
+Vercel detects Django automatically (it finds `manage.py`, discovers the
+settings module and reads `WSGI_APPLICATION`). It runs `collectstatic` and
+serves the collected files from the CDN at `/static/`; every other route hits
+the single WSGI function configured in `vercel.json`.
+
+1. Import the repo into Vercel — no Build command or Output directory is
+   needed (zero-config Django support).
+2. `DATABASE_URL`: point it at a managed PostgreSQL provider (Supabase, Neon
+   Render Postgres, etc.).
+3. Set the environment variables listed in the table above (`SECRET_KEY`,
+   `DEBUG=False`, `EMAIL_*`) in **Project Settings → Environment Variables**
+   for the Production, Preview, and Development scopes.
+4. `ALLOWED_HOSTS`/`CSRF_TRUSTED_ORIGINS`: only your **custom domains** need to
+   be listed. Every `*.vercel.app` deployment/branch/production hostname is
+   merged in automatically from Vercel's system environment variables, and
+   `DEBUG` defaults to `False` whenever `VERCEL=1` is present.
+
+> Because `DATABASE_URL` is a build/runtime variable that rarely changes, you
+> can also keep it in `.env` locally (gitignored) — the Vercel dashboard value
+> always wins at runtime.
 
 ### Production do's and don'ts
 

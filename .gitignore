@@ -17,7 +17,9 @@ collectstatic/
 
 # Environment / secrets
 .env
+.env.local
 *.env
+.vercel/
 DJANGO_SECRET_KEY
 
 # Editor / OS
