@@ -1,5 +1,6 @@
 /* ==========================================================================
    Task Manager · Responsive behaviour (built intentionally, per breakpoint)
+   Breakpoints: tablet rail 1024–721 · mobile ≤720 · small phones ≤420
    ========================================================================== */
 
 /* ---- Tablet: compact sidebar rail -------------------------------------- */
@@ -11,7 +12,7 @@
 
 @media (max-width: 1024px) and (min-width: 721px) {
     .app-sidebar {
-        width: 62px;
+        width: var(--rail-w);
     }
     .side-nav {
         padding-inline: 8px;
@@ -21,12 +22,16 @@
         display: none;
     }
     .side-section {
-        margin-bottom: 16px;
+        margin-bottom: var(--sp-4);
         width: 100%;
     }
     .side-link {
         justify-content: center;
-        padding: 9px 0;
+        min-height: 42px;
+        padding: 0;
+    }
+    .side-link.active::before {
+        left: -8px;
     }
     .side-link .side-text,
     .side-link .side-count {
@@ -51,12 +56,13 @@
 
 @media (max-width: 720px) {
     body {
-        font-size: 14px;
+        font-size: var(--fs-base);
     }
 
     .app-header {
-        height: 52px;
-        padding: 0 14px;
+        height: var(--topbar-h-mobile);
+        padding: 0 12px;
+        gap: 8px;
     }
     .header-brand .brand-name {
         display: none;
@@ -78,7 +84,8 @@
         top: 0;
         bottom: 0;
         left: 0;
-        z-index: 95;
+        z-index: var(--z-sidebar);
+        width: min(300px, 82vw);
         height: 100dvh;
         transform: translateX(-100%);
         transition: transform 260ms var(--ease);
@@ -93,60 +100,100 @@
     }
 
     .app-content {
-        padding: 20px 16px 96px;
+        padding: 20px 16px calc(var(--mobile-nav-h) + env(safe-area-inset-bottom) + 44px);
     }
 
-    /* Primary nav becomes a bottom tab bar */
+    /* Primary nav becomes a bottom tab bar (with elevated FAB dock) */
     .mobile-nav {
         display: block;
     }
 
-    /* The visible bottom tabs */
     .mobile-tab {
         display: flex;
     }
     .mobile-tab--add {
-        margin: -18px 0 0;
+        margin: -20px 0 0;
+        justify-content: flex-start;
     }
     .mobile-tab--add .mobile-tab__dot {
         display: grid;
         place-items: center;
-        width: 46px;
-        height: 46px;
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
-        background: var(--primary);
+        background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 88%, #fff), var(--primary));
         color: var(--on-primary);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        box-shadow: 0 6px 16px color-mix(in srgb, var(--primary) 42%, transparent);
+        border: 3px solid var(--surface);
+        transition: transform var(--t-fast), box-shadow var(--t-fast);
+    }
+    .mobile-tab--add .mobile-tab__dot:active {
+        transform: scale(0.94);
+    }
+    .mobile-tab--add .mobile-tab__dot:focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
     }
 
     /* Page heads stack */
     .page-head {
         align-items: flex-start;
         flex-direction: column;
-        gap: 12px;
+        gap: var(--sp-3);
     }
     .page-title {
-        font-size: 24px;
+        font-size: var(--fs-3xl);
+    }
+    .page-head-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    /* Buttons: touch-friendly, no text-shirinks */
+    .btn {
+        min-height: 40px;
+    }
+    .btn-lg {
+        min-height: 48px;
+    }
+    .btn-sm {
+        min-height: 36px;
+    }
+    .icon-btn {
+        min-height: 40px;
+        min-width: 40px;
     }
 
     /* Task rows: touch-first */
     .task-item {
-        padding: 12px 4px;
+        padding: 6px 4px;
+        gap: 10px;
     }
     .task__toggle {
-        width: 24px;
-        height: 24px;
+        width: 44px;
+        height: 44px;
+        margin: -8px 0 0 -10px;
+        border-width: 2px;
+    }
+    .task__toggle .icon {
+        width: 18px;
+        height: 18px;
     }
     .task__menu {
         opacity: 1;
-        width: 36px;
-        height: 36px;
+        width: 44px;
+        height: 44px;
+        margin: -4px -8px 0 0;
+    }
+    .task__menu .icon {
+        width: 19px;
+        height: 19px;
     }
 
-    /* Stats collapse to a priority flow */
+    /* Stats: 2×2 grid restores structure the actions row lost */
     .stats-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
+        gap: var(--sp-3);
     }
     .stats-grid > * {
         grid-column: span 1;
@@ -155,11 +202,11 @@
         grid-column: span 2;
     }
     .stat-card__value {
-        font-size: 24px;
+        font-size: var(--fs-2xl);
     }
     .kpi-card {
         grid-column: span 2;
-        padding: 18px;
+        padding: var(--sp-4);
     }
 
     .insight-row {
@@ -170,24 +217,43 @@
         grid-column: span 1;
     }
 
-    /* Palette: slide up */
-    .palette {
-        width: auto;
+    /* Dialogs become bottom sheets */
+    .palette,
+    .confirm,
+    .sheet {
+        width: 100%;
         margin: 0;
         position: absolute;
         bottom: 0;
         top: auto;
-        border-radius: 16px 16px 0 0;
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
         animation: sheet-up 260ms var(--ease) both;
     }
-
+    .palette {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    .palette__footer {
+        padding-bottom: calc(9px + env(safe-area-inset-bottom));
+    }
     .confirm {
-        margin: 0;
+        padding-bottom: calc(var(--sp-6) + env(safe-area-inset-bottom));
+    }
+
+    /* Task detail: immersive, edge-to-edge */
+    .detail {
+        margin: 0 -16px;
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+    }
+    .detail__head {
+        flex-wrap: wrap;
+    }
+    .detail__head .btns {
         width: 100%;
-        position: absolute;
-        bottom: 0;
-        top: auto;
-        border-radius: 16px 16px 0 0;
+    }
+    .detail__head .btns .btn {
+        flex: 1;
     }
 
     /* Forms stack */
@@ -201,7 +267,7 @@
     .toast-stack {
         left: 16px;
         right: 16px;
-        bottom: 76px;
+        bottom: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom) + 16px);
         max-width: none;
     }
 
@@ -233,18 +299,27 @@
 
 @media (max-width: 420px) {
     .page-title {
-        font-size: 22px;
+        font-size: var(--fs-2xl);
     }
     .header-actions .icon-btn {
-        width: 32px;
-        height: 32px;
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        min-height: 38px;
     }
-    .btn {
-        height: 34px;
-        padding: 0 11px;
-        font-size: 13px;
+    .app-header .btn-primary {
+        width: 40px;
+        height: 40px;
+        min-height: 40px;
+        padding: 0;
+    }
+    .app-header .btn-primary span {
+        display: none;
     }
     .task__meta {
-        gap: 8px;
+        gap: var(--sp-2);
+    }
+    .mobile-tab {
+        font-size: 10px;
     }
 }

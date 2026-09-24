@@ -532,6 +532,27 @@
     }
 }
 
+/* Tablet portrait: insight rows stack full-width so no card ever squeezes */
+@media (max-width: 900px) {
+    .stats-grid {
+        gap: var(--sp-3);
+    }
+    .stats-grid > * {
+        grid-column: span 3;
+    }
+    .stats-grid > .span-6 {
+        grid-column: span 6;
+    }
+    .insight-row {
+        grid-template-columns: 1fr;
+    }
+    .insight-row > .span-8,
+    .insight-row > .span-4,
+    .insight-row > .span-6 {
+        grid-column: span 1;
+    }
+}
+
 @media (max-width: 720px) {
     .dash-side {
         display: flex;
@@ -559,5 +580,9 @@
     }
     .fav-row__count {
         font-size: 14px;
+    }
+    .fav-row {
+        padding: 12px 0;
+        gap: 10px;
     }
 }

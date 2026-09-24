@@ -13,13 +13,13 @@
 .app-header {
     position: sticky;
     top: 0;
-    z-index: 60;
+    z-index: var(--z-header);
     display: flex;
     align-items: center;
-    gap: 12px;
-    height: 56px;
-    padding: 0 20px;
-    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    gap: var(--sp-3);
+    height: var(--topbar-h);
+    padding: 0 var(--content-pad-x);
+    background: var(--glass);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--border);
@@ -117,7 +117,7 @@
     width: 100%;
     max-width: var(--maxw);
     margin-inline: auto;
-    padding: 28px 32px 72px;
+    padding: var(--content-pad-y) var(--content-pad-x) 72px;
 }
 
 /* Page scaffolding (shared by every workspace page) */
@@ -125,20 +125,21 @@
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 16px;
+    gap: var(--sp-4);
     flex-wrap: wrap;
-    margin-bottom: 20px;
+    margin-bottom: var(--sp-5);
 }
 
 .page-title {
-    font-size: 26px;
-    line-height: 1.2;
+    font-size: var(--fs-display);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--track-tight);
 }
 
 .page-sub {
     color: var(--muted);
-    margin-top: 4px;
-    font-size: 14px;
+    margin-top: var(--sp-1);
+    font-size: var(--fs-base);
 }
 
 .page-head .title-block {
@@ -166,12 +167,12 @@
 /* ---- Empty / intro states -------------------------------------------- */
 
 .empty-state {
-    padding: 48px 24px;
+    padding: var(--sp-9) var(--sp-6);
     text-align: center;
     border: 1px dashed var(--border-strong);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-xl);
     background: var(--surface);
-    margin-top: 20px;
+    margin-top: var(--sp-5);
 }
 
 .empty-state .empty-icon {

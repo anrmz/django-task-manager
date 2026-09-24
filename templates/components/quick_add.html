@@ -1,6 +1,6 @@
 {% load task_extras %}
 <dialog class="overlay" id="quickAddDialog" aria-label="Create task">
-    <div class="editor-sheet" role="document">
+    <div class="editor-sheet" role="dialog" aria-modal="true" aria-label="Add task">
         {% include "components/quick_add_form.html" %}
     </div>
 </dialog>

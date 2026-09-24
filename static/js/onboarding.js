@@ -96,7 +96,10 @@ window.TM = window.TM || {};
 
             var top = Math.min(rect.top, vh - cardH - 16);
             if (top < 10) top = 10;
-            card.style.top = top + "px";
+            // Desktop: pin the card near its target. Mobile: the stylesheet
+            // turns the card into a pinned bottom sheet, so leave top unset.
+            if (vw > 720) card.style.top = top + "px";
+            else if (card.style.top) card.style.top = "";
         } else {
             spotlight.hidden = true;
             dialog.classList.add("tour--centered");

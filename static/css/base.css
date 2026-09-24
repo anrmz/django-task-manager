@@ -16,8 +16,8 @@ body {
     margin: 0;
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
         "Helvetica Neue", Arial, sans-serif;
-    font-size: 14.5px;
-    line-height: 1.55;
+    font-size: var(--fs-body);
+    line-height: var(--lh-normal);
     color: var(--text);
     background: var(--bg);
     -webkit-font-smoothing: antialiased;
@@ -30,9 +30,24 @@ h3,
 h4,
 h5 {
     margin: 0;
-    font-weight: 650;
-    letter-spacing: -0.015em;
+    font-weight: var(--fw-heavy);
+    letter-spacing: var(--track-tight);
     color: var(--text);
+}
+
+h1 {
+    font-size: var(--fs-3xl);
+    line-height: var(--lh-tight);
+}
+
+h2 {
+    font-size: var(--fs-xl);
+    line-height: var(--lh-snug);
+}
+
+h3 {
+    font-size: var(--fs-lg);
+    line-height: var(--lh-snug);
 }
 
 p {
@@ -118,7 +133,7 @@ kbd {
     color: var(--faint);
 }
 .small {
-    font-size: 12.5px;
+    font-size: var(--fs-sm);
 }
 
 .flex {

@@ -1,21 +1,21 @@
 {% load task_extras %}
 <nav class="mobile-nav" aria-label="Primary">
     <div class="mobile-nav-inner">
-        <a href="{% url 'my_day' %}" class="mobile-tab {% if nav.page == 'my_day' %}active{% endif %}" aria-label="My Day">
+        <a href="{% url 'my_day' %}" class="mobile-tab {% if nav.page == 'my_day' %}active{% endif %}" aria-label="My Day" {% if nav.page == 'my_day' %}aria-current="page"{% endif %}>
             {% icon 'sun' %}
             <span>My Day</span>
             <span class="badge-dot" data-nav-count="overdue" {% if not nav.overdue_count %}hidden{% endif %}>{{ nav.overdue_count }}</span>
         </a>
-        <a href="{% url 'inbox' %}" class="mobile-tab {% if nav.page == 'inbox' %}active{% endif %}" aria-label="Inbox">
+        <a href="{% url 'inbox' %}" class="mobile-tab {% if nav.page == 'inbox' %}active{% endif %}" aria-label="Inbox" {% if nav.page == 'inbox' %}aria-current="page"{% endif %}>
             {% icon 'inbox' %}
             <span>Inbox</span>
             <span class="badge-dot" data-nav-count="inbox" {% if not nav.inbox_count %}hidden{% endif %}>{{ nav.inbox_count }}</span>
         </a>
-        <a href="{% url 'upcoming' %}" class="mobile-tab {% if nav.page == 'upcoming' %}active{% endif %}" aria-label="Upcoming">
+        <a href="{% url 'upcoming' %}" class="mobile-tab {% if nav.page == 'upcoming' %}active{% endif %}" aria-label="Upcoming" {% if nav.page == 'upcoming' %}aria-current="page"{% endif %}>
             {% icon 'calendar' %}
             <span>Upcoming</span>
         </a>
-        <a href="{% url 'all_tasks' %}" class="mobile-tab {% if nav.page == 'all_tasks' %}active{% endif %}" aria-label="All Tasks">
+        <a href="{% url 'all_tasks' %}" class="mobile-tab {% if nav.page == 'all_tasks' %}active{% endif %}" aria-label="All Tasks" {% if nav.page == 'all_tasks' %}aria-current="page"{% endif %}>
             {% icon 'list' %}
             <span>Tasks</span>
         </a>

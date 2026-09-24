@@ -1,11 +1,89 @@
 /* ==========================================================================
    Task Manager · Design tokens
-   Spacing scale: 4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48
+
+   Typography scale (px, Inter):
+     11 · 12 · 13.5 · 14 · 15 · 16 · 18 · 22 · 26 · 32
+   Spacing scale:
+     4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 64 · 80 · 96
+   Shape: 8 · 10 · 12 · 16 · 20
+   Elevation: sm · md · lg (restrained)
    ========================================================================== */
 
 :root,
 :root[data-theme="light"] {
     color-scheme: light;
+
+    /* ----------------------------------------------------------------
+       Typography
+       ---------------------------------------------------------------- */
+    --fs-xs: 11px;
+    --fs-sm: 12px;
+    --fs-md: 13.5px;
+    --fs-base: 14px;
+    --fs-body: 15px;
+    --fs-lg: 16px;
+    --fs-xl: 18px;
+    --fs-2xl: 22px;
+    --fs-3xl: 26px;
+    --fs-display: 32px;
+
+    --lh-tight: 1.2;
+    --lh-snug: 1.35;
+    --lh-normal: 1.5;
+    --lh-relaxed: 1.62;
+
+    --fw-normal: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+    --fw-heavy: 650;
+
+    --track-tight: -0.01em;
+    --track-wide: 0.05em;
+
+    /* ----------------------------------------------------------------
+       Spacing
+       ---------------------------------------------------------------- */
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-5: 20px;
+    --sp-6: 24px;
+    --sp-7: 32px;
+    --sp-8: 40px;
+    --sp-9: 48px;
+    --sp-10: 64px;
+    --sp-11: 80px;
+    --sp-12: 96px;
+
+    /* ----------------------------------------------------------------
+       Layout metrics
+       ---------------------------------------------------------------- */
+    --sidebar-w: 232px;
+    --rail-w: 62px;
+    --topbar-h: 56px;
+    --topbar-h-mobile: 52px;
+    --mobile-nav-h: 60px;
+    --content-pad-y: 28px;
+    --content-pad-x: 32px;
+    --grid-gap: 20px;
+    --maxw: 1080px;
+
+    /* ----------------------------------------------------------------
+       Z-index scale
+       ---------------------------------------------------------------- */
+    --z-header: 60;
+    --z-mnav: 70;
+    --z-dropdown: 80;
+    --z-scrim: 90;
+    --z-sidebar: 95;
+    --z-mnav-fab: 75;
+    --z-toast: 1100;
+
+    /* ----------------------------------------------------------------
+       Touch
+       ---------------------------------------------------------------- */
+    --touch-min: 44px;
 
     /* Surfaces — tonal layering, no pure-white-everywhere */
     --bg: #f7f7f8;
@@ -23,7 +101,7 @@
     --text: #111827;
     --text-secondary: #374151;
     --muted: #6b7280;
-    --faint: #9ca3af;
+    --faint: #7e8698;
 
     /* Brand */
     --primary: #2563eb;
@@ -57,19 +135,41 @@
     --radius-md: 10px;
     --radius-lg: 12px;
     --radius-xl: 16px;
+    --radius-2xl: 20px;
 
     /* Shadows — deliberately restrained */
     --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.06);
     --shadow-md: 0 4px 12px rgba(17, 24, 39, 0.08);
     --shadow-lg: 0 16px 40px rgba(17, 24, 39, 0.14);
 
+    /* Elevation aliases (consumers should prefer these) */
+    --elev-1: var(--shadow-sm);
+    --elev-2: var(--shadow-md);
+    --elev-3: var(--shadow-lg);
+
+    /* Surfaces — shared helpers */
+    --glass: color-mix(in srgb, var(--surface) 88%, transparent);
+    --well: var(--surface-2);
+    --track: var(--surface-3);
+    --card-bg: var(--surface);
+    --card-border: var(--border);
+    --card-shadow: var(--elev-1);
+    --card-radius: var(--radius-lg);
+    --focus-ring: 0 0 0 3px var(--ring);
+
+    /* Chart accents (insights + dashboards) */
+    --chart-1: #2563eb;
+    --chart-2: #059669;
+    --chart-3: #d97706;
+    --chart-4: #7c3aed;
+    --chart-5: #db2777;
+    --chart-grid: rgba(17, 24, 39, 0.08);
+
     /* Motion */
     --ease: cubic-bezier(0.4, 0, 0.2, 1);
     --t-fast: 120ms var(--ease);
     --t-base: 180ms var(--ease);
     --t-slow: 260ms var(--ease);
-
-    --maxw: 1080px;
 }
 
 :root[data-theme="dark"] {
@@ -88,7 +188,7 @@
     --text: #f5f5f5;
     --text-secondary: #d4d4d8;
     --muted: #a1a1aa;
-    --faint: #71717a;
+    --faint: #8f8f9a;
 
     --primary: #6b9fff;
     --primary-hover: #8ab0ff;
@@ -116,4 +216,12 @@
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
     --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 16px 44px rgba(0, 0, 0, 0.5);
+
+    /* Chart accents (dark) */
+    --chart-1: #6b9fff;
+    --chart-2: #34d399;
+    --chart-3: #fbbf24;
+    --chart-4: #a78bfa;
+    --chart-5: #f472b6;
+    --chart-grid: rgba(245, 245, 245, 0.09);
 }

@@ -7,31 +7,31 @@
 .app-sidebar {
     display: flex;
     flex-direction: column;
-    width: 232px;
+    width: var(--sidebar-w);
     flex: none;
     background: var(--surface);
     border-right: 1px solid var(--border);
     position: sticky;
-    top: 56px;
-    height: calc(100dvh - 56px);
+    top: var(--topbar-h);
+    height: calc(100dvh - var(--topbar-h));
     overflow-y: auto;
     overscroll-behavior: contain;
 }
 
 .side-nav {
     flex: 1;
-    padding: 16px 12px 8px;
+    padding: var(--sp-4) var(--sp-3) var(--sp-2);
     display: flex;
     flex-direction: column;
 }
 
 .side-section {
-    margin-bottom: 20px;
+    margin-bottom: var(--sp-5);
 }
 
 .side-label {
-    font-size: 10.5px;
-    font-weight: 650;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-heavy);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--faint);
@@ -41,13 +41,14 @@
 .side-link {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 7px 10px;
+    gap: var(--sp-2);
+    padding: 0 10px;
+    min-height: 36px;
     margin-bottom: 1px;
     border-radius: var(--radius-sm);
     color: var(--muted);
-    font-size: 13.5px;
-    font-weight: 500;
+    font-size: var(--fs-md);
+    font-weight: var(--fw-medium);
     transition: background var(--t-fast), color var(--t-fast);
     position: relative;
     width: 100%;
@@ -69,7 +70,17 @@
 .side-link.active {
     background: var(--primary-soft);
     color: var(--primary);
-    font-weight: 600;
+    font-weight: var(--fw-semibold);
+}
+.side-link.active::before {
+    content: "";
+    position: absolute;
+    left: -12px;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: 99px;
+    background: var(--primary);
 }
 .side-link.active .icon {
     color: var(--primary);
@@ -77,8 +88,8 @@
 
 .side-count {
     margin-left: auto;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
     color: var(--faint);
     background: var(--surface-2);
     border-radius: 99px;
@@ -101,8 +112,9 @@
 .side-project {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 6px 10px;
+    gap: var(--sp-2);
+    min-height: 34px;
+    padding: 0 10px;
     border-radius: var(--radius-sm);
     color: var(--muted);
     font-size: 13px;
@@ -128,7 +140,7 @@
 
 .side-foot {
     border-top: 1px solid var(--border);
-    padding: 10px 12px;
+    padding: var(--sp-2) var(--sp-3);
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -254,11 +266,12 @@
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 70;
-    height: 60px;
+    z-index: var(--z-mnav);
+    height: var(--mobile-nav-h);
     background: var(--surface);
     border-top: 1px solid var(--border);
     padding-bottom: env(safe-area-inset-bottom);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.06);
 }
 
 .mobile-nav-inner {
@@ -278,28 +291,42 @@
     color: var(--faint);
     font-size: 10.5px;
     font-weight: 550;
+    min-height: var(--touch-min);
     padding: 0;
     transition: color var(--t-fast);
     position: relative;
+    -webkit-tap-highlight-color: transparent;
 }
-.mobile-tab .icon {
-    width: 20px;
-    height: 20px;
+.mobile-tab > .icon {
+    width: 22px;
+    height: 22px;
+    padding: 4px;
+    box-sizing: content-box;
+    border-radius: 10px;
+    transition: background var(--t-fast), color var(--t-fast);
+}
+.mobile-tab:active > .icon {
+    background: var(--surface-2);
 }
 .mobile-tab.active {
+    color: var(--primary);
+    font-weight: var(--fw-semibold);
+}
+.mobile-tab.active > .icon {
+    background: var(--primary-soft);
     color: var(--primary);
 }
 .mobile-tab .badge-dot {
     position: absolute;
-    top: 10px;
-    right: calc(50% - 18px);
+    top: 6px;
+    left: calc(50% + 8px);
     background: var(--danger);
     border-radius: 99px;
-    min-width: 14px;
-    height: 14px;
-    padding: 0 3px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
     color: #fff;
-    font-size: 9px;
+    font-size: var(--fs-xs);
     display: grid;
     place-items: center;
     border: 2px solid var(--surface);

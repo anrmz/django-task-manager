@@ -414,28 +414,59 @@
         border-radius: 0;
         box-shadow: none;
         border-top: 1px solid var(--border);
-        animation: sheet-up 220ms var(--ease) both;
+        animation: sheet-up 260ms var(--ease) both;
     }
     .editor {
-        padding: 16px 18px calc(16px + env(safe-area-inset-bottom));
+        padding: 14px 16px calc(16px + env(safe-area-inset-bottom));
         gap: 14px;
+    }
+    .editor__title {
+        font-size: var(--fs-2xl);
+        padding: 6px 0 4px;
     }
     .editor__row {
         grid-template-columns: 1fr;
     }
+    .editor__field-group,
+    .editor__input-wrap .editor__field {
+        height: 42px;
+    }
+    .editor__seg-item {
+        height: 38px;
+    }
     .editor__foot {
+        display: flex;
         position: sticky;
         bottom: 0;
         background: var(--surface-elevated);
-        padding-bottom: 8px;
+        padding-top: 10px;
+        padding-bottom: calc(10px + env(safe-area-inset-bottom));
+        margin: 0 -4px;
         z-index: 2;
     }
     .editor__foot .btn-primary {
         flex: 1;
+        min-height: 46px;
+    }
+    .editor__foot .editor__hint {
+        display: none;
     }
     @keyframes sheet-up {
-        from { transform: translateY(40px); opacity: 0.6; }
+        from { transform: translateY(60px); opacity: 0.6; }
         to { transform: none; opacity: 1; }
+    }
+}
+
+/* Full task form: same full-bleed capture language */
+@media (max-width: 640px) {
+    .task-form__grid {
+        grid-template-columns: 1fr;
+    }
+    .task-form__full {
+        grid-column: span 1;
+    }
+    .task-form {
+        padding: var(--sp-5) var(--sp-4) var(--sp-4);
     }
 }
 

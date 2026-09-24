@@ -249,6 +249,7 @@
 }
 .stats-grid > * {
     grid-column: span 2;
+    min-width: 0;
 }
 .stats-grid > .span-3 {
     grid-column: span 3;
@@ -268,4 +269,10 @@
 }
 .insight-row > .span-4 {
     grid-column: span 4;
+}
+.insight-row > .span-6 {
+    grid-column: span 6;
+}
+.insight-row > * {
+    min-width: 0;
 }
