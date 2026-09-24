@@ -21,7 +21,7 @@
 
     function needsReload() {
         // My Day renders aggregate counts/progress that must re-sync.
-        return document.querySelector(".progress-card") !== null;
+        return document.querySelector(".progress-card, .my-day-progress") !== null;
     }
 
     function navCounter(name) {

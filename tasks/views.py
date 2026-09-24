@@ -38,7 +38,7 @@ from django.views.decorators.http import require_POST
 
 from .forms import ProjectForm, QuickAddForm, RegisterForm, TaskForm, UserPreferencesForm
 from .models import Project, Subtask, Tag, Task, TaskEvent, UserSettings, log_task_event
-from .quotes import quote_for
+from .quotes import rotating_quote
 
 STATUS = Task.Status
 PRIORITY = Task.Priority
@@ -276,7 +276,7 @@ def my_day(request):
         "progress_done": completed_count,
         "progress_total": plate_total,
         "progress_pct": round((completed_count / plate_total) * 100) if plate_total else 0,
-        "quote": quote_for(today),
+        "quote": rotating_quote(request, today),
         "week_trend": week_trend,
         "week_peak": week_peak,
     }

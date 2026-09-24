@@ -694,14 +694,46 @@ class TaskManagerTests(TestCase):
             quote_for(base), quote_for(base + timedelta(days=7))
         )
 
-    def test_my_day_context_renders_quote_of_the_day(self):
-        from .quotes import quote_for
+    def test_my_day_rotates_quotes_without_immediate_repeat(self):
+        """Reloading My Day must serve a new quote, never repeating the last."""
+
+        from .quotes import QUOTES
 
         self._login()
-        response = self.client.get(reverse("my_day"))
-        text, author = quote_for()
-        self.assertContains(response, text)
-        self.assertContains(response, author)
+        seen = []
+        for _ in range(8):
+            response = self.client.get(reverse("my_day"))
+            self.assertEqual(response.status_code, 200)
+            quote = response.context["quote"]
+            self.assertIn(quote, QUOTES)
+            seen.append(quote)
+        for current, previous in zip(seen[1:], seen):
+            self.assertNotEqual(
+                current, previous, "a page refresh must not repeat the previous quote"
+            )
+
+    def test_quote_rotation_avoids_repeats_and_falls_back(self):
+        from .quotes import QUOTES, rotating_quote
+
+        class FakeSession(dict):
+            pass
+
+        request = type("R", (), {"session": FakeSession()})()
+        for _ in range(40):
+            first = rotating_quote(request)
+            second = rotating_quote(request)
+            self.assertIn(first, QUOTES)
+            self.assertNotEqual(first, second, "no two consecutive quotes may match")
+
+        class BrokenSession:
+            def get(self, *args, **kwargs):  # pragma: no cover - defensive
+                raise RuntimeError("no session")
+
+            def __setitem__(self, *args, **kwargs):  # pragma: no cover - defensive
+                raise RuntimeError("no session")
+
+        broken = type("R", (), {"session": BrokenSession()})()
+        self.assertIn(rotating_quote(broken), QUOTES)
 
     # --- dashboard & analytics context ----------------------------------------
 
@@ -712,7 +744,7 @@ class TaskManagerTests(TestCase):
             due_date=timezone.localdate() + timedelta(days=1),
         )
         response = self.client.get(reverse("my_day"))
-        self.assertContains(response, "progress-card")
+        self.assertContains(response, "my-day-progress")
         self.assertContains(response, "ring__bar")
         self.assertContains(response, "Due tomorrow thing")
 

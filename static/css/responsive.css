@@ -141,17 +141,22 @@
     .mobile-tab--add .mobile-tab__dot {
         display: grid;
         place-items: center;
-        width: 50px;
-        height: 50px;
+        width: 52px;
+        height: 52px;
         border-radius: 50%;
-        background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 88%, #fff), var(--primary));
+        background: var(--primary);
         color: var(--on-primary);
-        box-shadow: 0 6px 16px color-mix(in srgb, var(--primary) 42%, transparent);
-        border: 3px solid var(--surface);
-        transition: transform var(--t-fast), box-shadow var(--t-fast);
+        border: 0;
+        box-shadow: 0 4px 14px color-mix(in srgb, var(--primary) 38%, transparent);
+        transition: transform var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+        -webkit-tap-highlight-color: transparent;
+    }
+    .mobile-tab--add .mobile-tab__dot:hover {
+        background: var(--primary-hover);
     }
     .mobile-tab--add .mobile-tab__dot:active {
         transform: scale(0.94);
+        box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 30%, transparent);
     }
     .mobile-tab--add .mobile-tab__dot:focus-visible {
         outline: 2px solid var(--ring);
@@ -311,12 +316,30 @@
         min-height: 48px;
     }
 
-    /* My Day rhythm: rely on the flex gap, never double up on section margins */
-    .dash-main {
-        gap: 14px;
+    /* My Day rhythm is owned by dashboard.css — undo the generic flex gap */
+    .my-day .dash-main {
+        gap: 0;
     }
-    .dash-main .list-section {
+    .my-day .dash-main .list-section {
+        margin-top: var(--sp-5);
+    }
+    .my-day .my-day-progress {
+        margin-bottom: var(--sp-4);
+    }
+    .my-day .my-day-progress + .editorial-quote {
+        margin-top: var(--sp-2);
+    }
+    .my-day .editorial-quote {
+        margin-bottom: var(--sp-6);
+    }
+    .my-day .editorial-quote + .list-section {
         margin-top: 0;
+    }
+    .my-day .page-head {
+        margin-bottom: var(--sp-4);
+    }
+    .my-day .page-head-actions .btn-primary {
+        display: none;
     }
 
     /* Empty states: compact, still friendly */

@@ -25,23 +25,58 @@
     gap: 16px;
 }
 
-/* ---- Progress ring ------------------------------------------------------ */
+/* ---- My Day vertical rhythm: intent-driven spacing, no stacked cards ---- */
 
-.ring-card {
-    display: flex;
-    align-items: center;
-    gap: 22px;
-    padding: 20px 22px;
-    background:
-        radial-gradient(120% 140% at 0% 0%, var(--primary-soft), transparent 55%),
-        var(--surface);
+.my-day .dash-main {
+    gap: 0;
+}
+.my-day .my-day-progress {
+    margin-bottom: var(--sp-5);
+}
+.my-day .my-day-progress + .editorial-quote {
+    margin-top: var(--sp-1);
+}
+.my-day .editorial-quote {
+    margin-bottom: var(--sp-7);
+}
+.my-day .editorial-quote + .list-section {
+    margin-top: 0;
+}
+.my-day .dash-main .list-section {
+    margin-top: var(--sp-6);
 }
 
+/* ---- My Day: progress — a quiet, full-bleed "today" summary ------------ */
+
+.my-day .eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--faint);
+}
+
+.my-day-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.my-day-progress__main {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Reusable ring — it is the circle geometry only; the card around it is gone */
 .ring-wrap {
     position: relative;
     width: 76px;
     height: 76px;
     flex: none;
+}
+.my-day .ring-wrap {
+    width: 80px;
+    height: 80px;
 }
 .ring {
     display: block;
@@ -49,6 +84,10 @@
     height: 76px;
     transform: rotate(-90deg);
     overflow: visible;
+}
+.my-day .ring {
+    width: 80px;
+    height: 80px;
 }
 .ring--lg {
     width: 96px;
@@ -70,88 +109,149 @@
 .ring-center {
     position: absolute;
     inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
+    display: grid;
+    place-items: center;
     text-align: center;
 }
 .ring-center__value {
-    font-size: 22px;
+    grid-area: 1 / 1;
+    font-size: 24px;
     font-weight: 750;
     letter-spacing: -0.02em;
     line-height: 1;
     color: var(--text);
     font-variant-numeric: tabular-nums;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-inline: 6px;
 }
 .ring-center__label {
-    margin-top: 2px;
-    font-size: 10px;
+    grid-area: 1 / 1;
+    align-self: end;
+    justify-self: center;
+    font-size: 9.5px;
+    line-height: 1;
     color: var(--faint);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 4px);
+    padding-bottom: 12px;
+}
+.ring-center__label::after {
+    content: "";
+    display: block;
+    height: 6px;
 }
 .ring--lg + .ring-center .ring-center__value {
     font-size: 26px;
 }
 
-.ring-aside {
+.my-day-progress__copy {
     min-width: 0;
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
 }
-.ring-aside__title {
-    font-size: 16.5px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
+.my-day-progress__title {
+    font-size: 17px;
+    font-weight: 750;
+    letter-spacing: -0.012em;
+    line-height: 1.3;
     color: var(--text);
 }
-.ring-aside__sub {
+.my-day-progress__sub {
     font-size: 13px;
+    line-height: 1.45;
     color: var(--muted);
-    margin-top: 3px;
 }
-.ring-aside .progress {
-    margin-top: 12px;
-}
-
-/* ---- Quote of the day --------------------------------------------------- */
-
-.quote-card {
+.my-day-progress__bar {
     display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    padding: 14px 18px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--surface);
+    align-items: center;
 }
-.quote-card__mark {
-    display: grid;
-    place-items: center;
-    width: 30px;
-    height: 30px;
-    flex: none;
-    border-radius: 9px;
-    background: linear-gradient(180deg, var(--warning-soft), var(--surface-2));
-    color: var(--warning);
+.my-day-progress__bar .progress {
+    height: 5px;
+    flex: 1;
 }
-.quote-card__mark .icon {
-    width: 15px;
-    height: 15px;
+
+/* ---- My Day: focus quote — editorial, typography-led -------------------- */
+
+.editorial-quote {
+    position: relative;
+    max-width: 46em;
 }
-.quote-card__text {
-    min-width: 0;
-}
-.quote-card__body {
-    font-size: 13.5px;
-    font-weight: 550;
-    line-height: 1.5;
-    color: var(--text-secondary);
-}
-.quote-card__who {
-    font-size: 12px;
+.editorial-quote__label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
     color: var(--faint);
-    margin-top: 3px;
+}
+.editorial-quote__rule {
+    width: 26px;
+    height: 2px;
+    border-radius: 99px;
+    background: var(--primary);
+    flex: none;
+}
+.editorial-quote__block {
+    margin: 16px 0 0;
+    position: relative;
+}
+.editorial-quote__text {
+    position: relative;
+    margin: 0;
+    padding-left: 30px;
+    font-size: 20px;
+    font-weight: 450;
+    line-height: 1.55;
+    letter-spacing: -0.012em;
+    color: var(--text-secondary);
+    text-wrap: pretty;
+}
+.editorial-quote__text::before {
+    content: "\201C";
+    position: absolute;
+    left: 0;
+    top: -6px;
+    font-size: 58px;
+    line-height: 1;
+    font-weight: 750;
+    color: var(--primary-soft);
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+}
+.editorial-quote__cite {
+    position: relative;
+    display: block;
+    margin-top: 12px;
+    padding-left: 30px;
+    font-size: 13px;
+    font-weight: 500;
+    font-style: normal;
+    color: var(--faint);
+}
+
+@keyframes quote-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+@media (prefers-reduced-motion: no-preference) {
+    .editorial-quote {
+        animation: quote-in 320ms var(--ease) both;
+    }
 }
 
 .empty-quote {
@@ -557,8 +657,10 @@
     .dash-side {
         display: flex;
         gap: 14px;
+        margin-top: var(--sp-6);
     }
-    .ring-card,
+
+    /* Productivity hero keeps its compact row on mobile */
     .kpi-ring-card {
         display: flex;
         flex-direction: row;
@@ -566,35 +668,65 @@
         gap: 14px;
         padding: 16px;
     }
-    .ring-wrap,
     .kpi-ring-card .ring-wrap {
         width: 68px;
         height: 68px;
         flex: none;
     }
-    .ring-card .ring,
-    .ring--lg,
-    .kpi-ring-card .ring {
+    .kpi-ring-card .ring--lg {
         width: 68px;
         height: 68px;
     }
-    .ring--lg + .ring-center .ring-center__value,
     .kpi-ring-card .ring-center__value {
         font-size: 20px;
     }
-    .ring-center__label {
-        font-size: 9.5px;
+
+    /* My Day progress: ring scales to the smallest phones, text never clips */
+    .my-day .ring-wrap,
+    .my-day .ring {
+        width: 72px;
+        height: 72px;
     }
-    .ring-aside__title {
-        font-size: 15.5px;
+    .my-day-progress {
+        gap: 14px;
     }
-    .ring-aside__sub {
+    .my-day-progress__main {
+        gap: 14px;
+    }
+    .my-day-progress__title {
+        font-size: 16px;
+    }
+    .my-day-progress__sub {
         font-size: 12.5px;
-        line-height: 1.45;
+        line-height: 1.42;
     }
-    .ring-aside .progress {
-        margin-top: 9px;
+
+    /* Editorial quote reads large on touch screens */
+    .editorial-quote__text {
+        font-size: 19px;
     }
+
+    /* "At a glance" + chart lose their card backing on mobile */
+    .my-day .dash-card--side {
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+    }
+    .my-day .dash-card--side .dash-card__head {
+        padding: 0 0 var(--sp-2);
+    }
+    .my-day .dash-card--side .dash-card__body {
+        padding: 0;
+    }
+    .glance-row {
+        padding: 10px 0;
+    }
+
+    /* Compress the "next 7 days" footnote inside its list section */
+    .list-section .page-sub.mt-8 {
+        margin-top: var(--sp-3);
+    }
+
     .bars-compare {
         gap: 8px;
     }
