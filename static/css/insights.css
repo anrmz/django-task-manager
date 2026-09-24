@@ -276,3 +276,22 @@
 .insight-row > * {
     min-width: 0;
 }
+
+/* ---- Mobile: metrics as a deliberate 2-column grid ----------------------- */
+
+@media (max-width: 720px) {
+    .stat-card {
+        padding: 16px 14px;
+    }
+    .stat-card__label {
+        font-size: 12px;
+        line-height: 1.35;
+    }
+    .stat-card__value {
+        font-size: 26px;
+        line-height: 1.1;
+    }
+    .stat-card__sub {
+        font-size: 11.5px;
+    }
+}

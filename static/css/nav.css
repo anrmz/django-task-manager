@@ -267,8 +267,10 @@
     right: 0;
     bottom: 0;
     z-index: var(--z-mnav);
-    height: var(--mobile-nav-h);
-    background: var(--surface);
+    height: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom));
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
     border-top: 1px solid var(--border);
     padding-bottom: env(safe-area-inset-bottom);
     box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.06);
@@ -292,10 +294,12 @@
     font-size: 10.5px;
     font-weight: 550;
     min-height: var(--touch-min);
+    min-width: 0;
     padding: 0;
     transition: color var(--t-fast);
     position: relative;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 .mobile-tab > .icon {
     width: 22px;

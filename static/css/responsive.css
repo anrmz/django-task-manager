@@ -61,7 +61,11 @@
 
     .app-header {
         height: var(--topbar-h-mobile);
-        padding: 0 12px;
+        padding: 0 8px;
+        gap: 4px;
+    }
+    .header-brand {
+        padding-left: 6px;
         gap: 8px;
     }
     .header-brand .brand-name {
@@ -73,6 +77,25 @@
     .hamburger,
     .header-search-icon {
         display: grid;
+    }
+
+    /* Header controls: consistent 44px touch targets, no cramped multi-action row */
+    .app-header .header-actions {
+        gap: 4px;
+    }
+    .app-header :is(.icon-btn, .js-dropdown-btn) {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+    }
+    .app-header .btn-primary {
+        display: none;
+    }
+    .app-header .avatar {
+        width: 30px;
+        height: 30px;
+        font-size: 13px;
     }
 
     .app-body {
@@ -217,6 +240,10 @@
         grid-column: span 1;
     }
 
+    .palette__footer {
+        display: none;
+    }
+
     /* Dialogs become bottom sheets */
     .palette,
     .confirm,
@@ -264,6 +291,57 @@
         grid-column: span 1;
     }
 
+    /* Menus/dropdowns need comfortable target sizes on touch */
+    .row-menu {
+        width: 240px;
+    }
+    .row-menu.is-up {
+        top: auto;
+        bottom: calc(100% + 8px);
+    }
+    .row-menu__item {
+        min-height: 46px;
+        padding: 10px 12px;
+    }
+    .dropdown-item {
+        min-height: 44px;
+        padding: 10px 12px;
+    }
+    .palette__row {
+        min-height: 48px;
+    }
+
+    /* My Day rhythm: rely on the flex gap, never double up on section margins */
+    .dash-main {
+        gap: 14px;
+    }
+    .dash-main .list-section {
+        margin-top: 0;
+    }
+
+    /* Empty states: compact, still friendly */
+    .empty-state {
+        padding: 34px 20px;
+        border-radius: var(--radius-lg);
+        margin-top: 0;
+    }
+    .empty-state .empty-icon {
+        margin-bottom: 14px;
+    }
+
+    /* Tap devices: no double-tap zoom, no 300ms delay on controls */
+    .btn,
+    .icon-btn,
+    .mobile-tab,
+    .mobile-tab__dot,
+    .task__toggle,
+    .subtask__check,
+    .row-menu__item,
+    .dropdown-item,
+    .palette__row {
+        touch-action: manipulation;
+    }
+
     .toast-stack {
         left: 16px;
         right: 16px;
@@ -299,27 +377,21 @@
 
 @media (max-width: 420px) {
     .page-title {
-        font-size: var(--fs-2xl);
-    }
-    .header-actions .icon-btn {
-        width: 38px;
-        height: 38px;
-        min-width: 38px;
-        min-height: 38px;
-    }
-    .app-header .btn-primary {
-        width: 40px;
-        height: 40px;
-        min-height: 40px;
-        padding: 0;
-    }
-    .app-header .btn-primary span {
-        display: none;
+        font-size: 24px;
     }
     .task__meta {
         gap: var(--sp-2);
     }
     .mobile-tab {
-        font-size: 10px;
+        font-size: 10.5px;
+    }
+}
+
+/* ---- Tiny phones: shed decorative metric icons so labels never wrap ------ */
+
+@media (max-width: 340px) {
+    .stat-card__label .icon,
+    .metric-card__title .icon {
+        display: none;
     }
 }

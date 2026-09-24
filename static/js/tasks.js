@@ -228,7 +228,18 @@
             if (!open) {
                 trigger.setAttribute("aria-expanded", "true");
                 var menu = trigger.nextElementSibling;
-                if (menu) menu.classList.remove("hidden");
+                if (menu) {
+                    menu.classList.remove("hidden");
+                    menu.classList.remove("is-up");
+                    if (window.matchMedia("(max-width: 720px)").matches) {
+                        var host = trigger.closest(".task__actions");
+                        var spaceBelow = window.innerHeight - (host ? host.getBoundingClientRect().bottom : trigger.getBoundingClientRect().bottom);
+                        if (menu.offsetHeight > spaceBelow) menu.classList.add("is-up");
+                        window.requestAnimationFrame(function () {
+                            menu.scrollIntoView({ block: "nearest", inline: "nearest" });
+                        });
+                    }
+                }
             }
             return;
         }

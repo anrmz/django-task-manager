@@ -556,24 +556,44 @@
 @media (max-width: 720px) {
     .dash-side {
         display: flex;
+        gap: 14px;
     }
     .ring-card,
     .kpi-ring-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 18px 16px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 14px;
+        padding: 16px;
     }
     .ring-wrap,
-    .ring--lg,
     .kpi-ring-card .ring-wrap {
-        width: 72px;
-        height: 72px;
+        width: 68px;
+        height: 68px;
+        flex: none;
     }
+    .ring-card .ring,
     .ring--lg,
     .kpi-ring-card .ring {
-        width: 72px;
-        height: 72px;
+        width: 68px;
+        height: 68px;
+    }
+    .ring--lg + .ring-center .ring-center__value,
+    .kpi-ring-card .ring-center__value {
+        font-size: 20px;
+    }
+    .ring-center__label {
+        font-size: 9.5px;
+    }
+    .ring-aside__title {
+        font-size: 15.5px;
+    }
+    .ring-aside__sub {
+        font-size: 12.5px;
+        line-height: 1.45;
+    }
+    .ring-aside .progress {
+        margin-top: 9px;
     }
     .bars-compare {
         gap: 8px;
