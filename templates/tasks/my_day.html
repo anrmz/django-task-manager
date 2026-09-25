@@ -53,12 +53,18 @@
             </section>
 
             {% if quote %}
-            <section class="editorial-quote" aria-label="Focus for today">
-                <p class="editorial-quote__label"><span class="editorial-quote__rule" aria-hidden="true"></span>Focus for today</p>
-                <blockquote class="editorial-quote__block">
-                    <p class="editorial-quote__text">{{ quote.0 }}</p>
-                    <cite class="editorial-quote__cite">&nbsp;&mdash;&nbsp;{{ quote.1 }}</cite>
-                </blockquote>
+            <section class="daily-focus" aria-label="Focus for today">
+                <span class="daily-focus__mark" aria-hidden="true">&ldquo;</span>
+                <div class="daily-focus__inner">
+                    <p class="daily-focus__eyebrow">
+                        <span class="daily-focus__rule" aria-hidden="true"></span>
+                        Daily focus
+                    </p>
+                    <blockquote class="daily-focus__block">
+                        <p class="daily-focus__text">{{ quote.0 }}</p>
+                    </blockquote>
+                    <cite class="daily-focus__cite">&mdash; {{ quote.1 }}</cite>
+                </div>
             </section>
             {% endif %}
 

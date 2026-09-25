@@ -125,56 +125,212 @@
     color: var(--warning);
 }
 
-/* ---- Weekly trend ------------------------------------------------------ */
+/* ---- Last 7 days — the signature weekly activity chart ------------------ */
+/* A calm bar readout: value above the bar, weekday labels below, the current
+   day lifted onto a soft container so "today" is obvious at a glance.       */
 
-.trend-card {
+.week-card {
     padding: 8px 20px 20px;
 }
-.trend-bars {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-    align-items: end;
-    height: 132px;
-    margin-top: 12px;
+.week-card__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 10px 0 0;
 }
-.trend-col {
+.week-card__titles {
+    min-width: 0;
+}
+.week-card__titles h2 {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+.week-card__sub {
+    margin-top: 3px;
+    font-size: 12px;
+    color: var(--muted);
+}
+.week-card__total {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    align-items: stretch;
-    height: 100%;
-    gap: 5px;
+    align-items: flex-end;
+    flex: none;
 }
-.trend-col__track {
-    position: relative;
+.week-card__total-value {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+.week-card__total-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    font-size: 10.5px;
+    font-weight: 650;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+.week-card__total-label .icon {
+    color: var(--primary);
+}
+.week-card__body {
+    margin-top: 18px;
+}
+.week-chart__bars {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: clamp(6px, 1.6vw, 14px);
+    height: 148px;
+}
+.week-col {
+    margin: 0;
+    height: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+.week-col__tag {
+    min-height: 15px;
+    display: flex;
+    align-items: flex-end;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--primary);
+}
+.week-col__value {
+    min-height: 16px;
+    display: flex;
+    align-items: center;
+    font-size: 12.5px;
+    font-weight: 650;
+    line-height: 1;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+.week-col__track {
+    width: 100%;
+    max-width: 24px;
     flex: 1;
     display: flex;
     align-items: flex-end;
-    border-radius: 4px;
+    border-radius: 5px;
     background: var(--surface-2);
+    box-shadow: inset 0 -1px 0 0 var(--chart-grid);
     overflow: hidden;
 }
-.trend-col__bar {
+.week-col__bar {
     width: 100%;
-    border-radius: 4px;
-    background: var(--primary-soft);
-    transition: height 300ms var(--ease), background var(--t-fast);
+    border-radius: 5px;
+    background: var(--chart-1);
+    opacity: 0.4;
+    transition: opacity 160ms var(--ease);
 }
-.trend-col:hover .trend-col__bar {
-    background: var(--primary);
+.week-col:hover .week-col__bar,
+.week-col:focus-within .week-col__bar {
+    opacity: 1;
 }
-.trend-col__value {
-    font-size: 11px;
-    color: var(--muted);
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-    min-height: 15px;
-}
-.trend-col__day {
+.week-col__day {
+    padding-top: 6px;
     font-size: 11px;
     color: var(--faint);
-    text-align: center;
+}
+.week-col.is-today .week-col__tag {
+    color: var(--primary);
+}
+.week-col.is-today .week-col__value {
+    color: var(--primary);
+}
+.week-col.is-today .week-col__track {
+    background: var(--primary-soft);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 26%, transparent);
+}
+.week-col.is-today .week-col__bar {
+    opacity: 1;
+    background: var(--primary);
+}
+.week-col.is-today .week-col__day {
+    color: var(--primary);
+    font-weight: 700;
+}
+.week-card__summary {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 14px;
+    font-size: 12.5px;
+    color: var(--muted);
+}
+.week-card__summary strong {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+.week-card__delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 99px;
+    font-size: 11.5px;
+    font-weight: 650;
+    color: var(--success);
+    background: var(--success-soft);
+}
+.week-card__delta.is-down {
+    color: var(--danger);
+    background: var(--danger-soft);
+}
+.week-card__delta .icon {
+    width: 13px;
+    height: 13px;
+}
+
+@keyframes week-rise {
+    from {
+        transform: scaleY(0);
+    }
+    to {
+        transform: none;
+    }
+}
+@media (prefers-reduced-motion: no-preference) {
+    .week-col__bar {
+        transform-origin: 50% 100%;
+        animation: week-rise 400ms var(--ease) both;
+    }
+    .week-col:nth-child(2) .week-col__bar {
+        animation-delay: 45ms;
+    }
+    .week-col:nth-child(3) .week-col__bar {
+        animation-delay: 90ms;
+    }
+    .week-col:nth-child(4) .week-col__bar {
+        animation-delay: 135ms;
+    }
+    .week-col:nth-child(5) .week-col__bar {
+        animation-delay: 180ms;
+    }
+    .week-col:nth-child(6) .week-col__bar {
+        animation-delay: 225ms;
+    }
+    .week-col:nth-child(7) .week-col__bar {
+        animation-delay: 270ms;
+    }
 }
 
 /* ---- Progress ---------------------------------------------------------- */
@@ -293,5 +449,20 @@
     }
     .stat-card__sub {
         font-size: 11.5px;
+    }
+    .week-card {
+        padding: 4px 16px 16px;
+    }
+    .week-card__head {
+        padding: 8px 0 0;
+    }
+    .week-card__total-value {
+        font-size: 22px;
+    }
+    .week-card__body {
+        margin-top: 16px;
+    }
+    .week-chart__bars {
+        height: 138px;
     }
 }

@@ -72,26 +72,44 @@
     </div>
 
     <div class="insight-row">
-        <section class="dash-card trend-card span-8" aria-label="Tasks completed this week">
-            <div class="dash-card__head">
-                <h2>Completed this week</h2>
-                <span class="small faint">{{ week_label }}</span>
-            </div>
-            <div class="trend-bars" style="margin-top: 6px;">
-                {% for day in trend %}
-                <div class="trend-col">
-                    {% if day.count %}
-                    <div class="trend-col__value">{{ day.count }}</div>
-                    <div class="trend-col__track">
-                        <div class="trend-col__bar" style="height: {% widthratio day.count peak 100 %}%;" title="{{ day.label }}: {{ day.count }}"></div>
-                    </div>
-                    {% else %}
-                    <div class="trend-col__value">&nbsp;</div>
-                    <div class="trend-col__track"></div>
-                    {% endif %}
-                    <div class="trend-col__day">{{ day.label }}</div>
+        <section class="dash-card week-card span-8" aria-label="Tasks completed in the last seven days">
+            <div class="week-card__head">
+                <div class="week-card__titles">
+                    <h2>Last 7 days</h2>
+                    <p class="week-card__sub">Your completed tasks this week</p>
                 </div>
-                {% endfor %}
+                <div class="week-card__total" aria-label="{{ week_total }} tasks completed this week">
+                    <span class="week-card__total-value">{{ week_total }}</span>
+                    <span class="week-card__total-label">
+                        {% icon 'check' size="12" %}completed
+                    </span>
+                </div>
+            </div>
+            <div class="week-card__body">
+                <div class="week-chart" role="img" aria-label="Completed tasks per day, last seven days{% for day in days %}: {{ day.label }} {{ day.completed }}{% if day.is_today %} (today){% endif %}{% endfor %}">
+                    <div class="week-chart__bars">
+                        {% for day in days %}
+                        <figure class="week-col{% if day.is_today %} is-today{% endif %}"{% if day.is_today %} aria-current="date"{% endif %} title="{{ day.label }}: {{ day.completed }} completed">
+                            <span class="week-col__tag">{% if day.is_today %}Today{% endif %}</span>
+                            <span class="week-col__value">{{ day.completed }}</span>
+                            <div class="week-col__track">
+                                <div class="week-col__bar" style="height: {% widthratio day.completed week_peak 100 %}%;"></div>
+                            </div>
+                            <figcaption class="week-col__day">{{ day.label }}</figcaption>
+                        </figure>
+                        {% endfor %}
+                    </div>
+                </div>
+                <p class="week-card__summary">
+                    <strong>{{ week_total }}</strong>
+                    <span>tasks completed this week</span>
+                    {% if week_delta is not None and week_delta != 0 %}
+                    <span class="week-card__delta{% if week_delta < 0 %} is-down{% endif %}">
+                        {% if week_delta > 0 %}{% icon 'trend-up' size="13" %}{% else %}{% icon 'trend-down' size="13" %}{% endif %}
+                        {{ week_delta|cut:"-" }}% vs previous 7 days
+                    </span>
+                    {% endif %}
+                </p>
             </div>
         </section>
 
@@ -122,7 +140,7 @@
                         <span class="bars-compare__value">{{ week.count }}</span>
                         <div class="bars-compare__track">
                             <div class="bars-compare__bar{% if forloop.last %} is-current{% endif %}"
-                                 style="height: {% widthratio week.count week_peak 100 %}%;"
+                                 style="height: {% widthratio week.count week_series_peak 100 %}%;"
                                  title="{{ week.label }}: {{ week.count }}"></div>
                         </div>
                         <span class="bars-compare__label">{{ week.label }}</span>

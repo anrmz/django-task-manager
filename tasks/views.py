@@ -171,27 +171,6 @@ def _streak(query):
     return streak
 
 
-def _weekly_trend(query, monday):
-    """Per-day completed counts Mon→Sun for the given week."""
-    counts = {i: 0 for i in range(7)}
-    rows = (
-        query.filter(
-            completed_at__isnull=False,
-            completed_at__date__gte=monday,
-            completed_at__date__lte=monday + timedelta(days=6),
-        )
-        .annotate(day=TruncDate("completed_at"))
-        .values("day")
-        .annotate(total=Count("id"))
-    )
-    for row in rows:
-        counts[row["day"].weekday()] = row["total"]
-    return [
-        {"label": label, "count": counts[i]}
-        for i, label in enumerate(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"])
-    ]
-
-
 def _week_bounds(day=None):
     day = day or timezone.localdate()
     monday = day - timedelta(days=day.weekday())
@@ -1051,10 +1030,6 @@ def productivity(request):
     streak = _streak(user_tasks.filter(status=STATUS.COMPLETED))
     completed_qs = user_tasks.filter(status=STATUS.COMPLETED)
 
-    # 7-day completed trend (Mon→Sun), normalised for the bar chart.
-    trend = _weekly_trend(completed_qs, monday)
-    peak = max([d["count"] for d in trend] + [1])
-
     # Four most recent complete weeks (Mon–Sun) of completed tasks.
     week_series = []
     for back in (3, 2, 1, 0):
@@ -1064,7 +1039,7 @@ def productivity(request):
             "label": f"{wmonday:%b %d}",
             "count": wtotal,
         })
-    week_peak = max([w["count"] for w in week_series] + [1])
+    week_series_peak = max([w["count"] for w in week_series] + [1])
 
     # Created vs completed, one pair per day for the last 7 days.
     trend_start = today - timedelta(days=6)
@@ -1072,10 +1047,24 @@ def productivity(request):
     completed_days = _daily_counts(completed_qs, trend_start, 7)
     days = [
         {"label": (trend_start + timedelta(days=i)).strftime("%a"),
-         "created": created_days[i], "completed": completed_days[i]}
+         "created": created_days[i], "completed": completed_days[i],
+         "is_today": i == 6}
         for i in range(7)
     ]
     days_peak = max([max(d["created"], d["completed"]) for d in days] + [1])
+
+    # Last 7 days — the headline activity number plus an honest comparison
+    # against the previous 7 days (both from real completed-task data).
+    week_peak = max([d["completed"] for d in days] + [1])
+    week_total = sum(d["completed"] for d in days)
+    prev_week_total = sum(
+        _daily_counts(completed_qs, today - timedelta(days=13), 7).values()
+    )
+    week_delta = (
+        round((week_total - prev_week_total) / prev_week_total * 100)
+        if prev_week_total
+        else None
+    )
 
     # All-time weekday pattern (ExtractWeekDay: 1=Sunday … 7=Saturday).
     weekday_totals = {i: 0 for i in range(7)}
@@ -1118,12 +1107,13 @@ def productivity(request):
         "created_month": created_month,
         "completion_rate": completion_rate,
         "streak": streak,
-        "trend": trend,
-        "peak": peak,
         "week_label": f"{monday:%b %d} – {sunday:%b %d}",
         "has_data": total > 0,
         "week_series": week_series,
+        "week_series_peak": week_series_peak,
         "week_peak": week_peak,
+        "week_total": week_total,
+        "week_delta": week_delta,
         "days": days,
         "days_peak": days_peak,
         "weekday": weekday,

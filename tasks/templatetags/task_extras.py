@@ -54,6 +54,8 @@ _ICONS = {
     "history": '<path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /><path d="M12 8v4l2.5 1.5" />',
     "keyboard": '<rect x="2.5" y="6" width="19" height="12" rx="2" /><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h.01M18 14h.01M9 14h6" />',
     "sparkles": '<path d="M12 3l1.7 4.3L18 9l-4.3 1.7L12 15l-1.7-4.3L6 9l4.3-1.7Z" /><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8Z" />',
+    "trend-up": '<path d="M3 17l6-6 4 4 7-8.5" /><path d="M14.5 7H21v6.5" />',
+    "trend-down": '<path d="M3 7l6 6 4-4 7 8.5" /><path d="M14.5 17H21v-6.5" />',
     "x-circle": '<circle cx="12" cy="12" r="9.5" /><path d="m9 9 6 6M15 9l-6 6" />',
 }
 

@@ -326,13 +326,13 @@
     .my-day .my-day-progress {
         margin-bottom: var(--sp-4);
     }
-    .my-day .my-day-progress + .editorial-quote {
+    .my-day .my-day-progress + .daily-focus {
         margin-top: var(--sp-2);
     }
-    .my-day .editorial-quote {
+    .my-day .daily-focus {
         margin-bottom: var(--sp-6);
     }
-    .my-day .editorial-quote + .list-section {
+    .my-day .daily-focus + .list-section {
         margin-top: 0;
     }
     .my-day .page-head {

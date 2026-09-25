@@ -33,13 +33,13 @@
 .my-day .my-day-progress {
     margin-bottom: var(--sp-5);
 }
-.my-day .my-day-progress + .editorial-quote {
+.my-day .my-day-progress + .daily-focus {
     margin-top: var(--sp-1);
 }
-.my-day .editorial-quote {
+.my-day .daily-focus {
     margin-bottom: var(--sp-7);
 }
-.my-day .editorial-quote + .list-section {
+.my-day .daily-focus + .list-section {
     margin-top: 0;
 }
 .my-day .dash-main .list-section {
@@ -167,13 +167,57 @@
     flex: 1;
 }
 
-/* ---- My Day: focus quote — editorial, typography-led -------------------- */
+/* ---- My Day: Daily Focus — the signature editorial quote ----------------- */
+/* An atmospheric surface, oversized serif mark and large quote type set it  */
+/* apart from analytics cards: this reads as "today's thought".              */
 
-.editorial-quote {
+.daily-focus {
     position: relative;
-    max-width: 46em;
+    overflow: hidden;
+    margin: var(--sp-1) 0 var(--sp-7);
+    padding: clamp(22px, 4.6vw, 32px) clamp(18px, 4vw, 34px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--elev-1);
+    background:
+        radial-gradient(130% 170% at 92% -18%, color-mix(in srgb, var(--chart-3) 10%, transparent), transparent 56%),
+        linear-gradient(180deg, color-mix(in srgb, var(--chart-3) 6%, var(--surface-elevated)), var(--surface));
+    border-color: color-mix(in srgb, var(--chart-3) 18%, var(--border));
 }
-.editorial-quote__label {
+:root[data-theme="dark"] .daily-focus {
+    background:
+        radial-gradient(150% 190% at 88% -16%, color-mix(in srgb, var(--primary) 22%, transparent), transparent 62%),
+        linear-gradient(180deg, color-mix(in srgb, var(--primary-soft) 62%, var(--surface-elevated)), var(--surface-elevated));
+    border-color: color-mix(in srgb, var(--primary) 24%, var(--border));
+}
+.daily-focus::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), color-mix(in srgb, var(--primary) 22%, transparent));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.daily-focus__mark {
+    position: absolute;
+    top: -36px;
+    right: clamp(0px, 3vw, 42px);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(150px, 26vw, 230px);
+    line-height: 1;
+    color: var(--primary);
+    opacity: 0.10;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+}
+.daily-focus__inner {
+    position: relative;
+    z-index: 1;
+}
+.daily-focus__eyebrow {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -181,49 +225,33 @@
     font-weight: 700;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: var(--faint);
+    color: var(--primary);
 }
-.editorial-quote__rule {
+.daily-focus__rule {
     width: 26px;
     height: 2px;
     border-radius: 99px;
     background: var(--primary);
     flex: none;
 }
-.editorial-quote__block {
-    margin: 16px 0 0;
-    position: relative;
+.daily-focus__block {
+    margin: 14px 0 0;
 }
-.editorial-quote__text {
-    position: relative;
+.daily-focus__text {
     margin: 0;
-    padding-left: 30px;
-    font-size: 20px;
-    font-weight: 450;
-    line-height: 1.55;
-    letter-spacing: -0.012em;
+    max-width: 34em;
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-size: clamp(19px, 2.5vw, 24px);
+    line-height: 1.5;
+    letter-spacing: -0.005em;
     color: var(--text-secondary);
     text-wrap: pretty;
 }
-.editorial-quote__text::before {
-    content: "\201C";
-    position: absolute;
-    left: 0;
-    top: -6px;
-    font-size: 58px;
-    line-height: 1;
-    font-weight: 750;
-    color: var(--primary-soft);
-    pointer-events: none;
-    user-select: none;
-    z-index: 0;
-}
-.editorial-quote__cite {
-    position: relative;
+.daily-focus__cite {
     display: block;
-    margin-top: 12px;
-    padding-left: 30px;
-    font-size: 13px;
+    margin-top: 14px;
+    font-size: 12.5px;
     font-weight: 500;
     font-style: normal;
     color: var(--faint);
@@ -240,7 +268,7 @@
     }
 }
 @media (prefers-reduced-motion: no-preference) {
-    .editorial-quote {
+    .daily-focus {
         animation: quote-in 320ms var(--ease) both;
     }
 }
@@ -248,12 +276,19 @@
 .empty-quote {
     margin: 18px auto 0;
     max-width: 30em;
-    font-size: 13px;
-    color: var(--muted);
+    font-family: Georgia, "Times New Roman", serif;
     font-style: italic;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text-secondary);
 }
 .empty-quote span {
     display: block;
+    margin-top: 6px;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+    font-style: normal;
+    font-size: 12px;
     color: var(--faint);
 }
 
@@ -710,8 +745,16 @@
         line-height: 1.42;
     }
 
-    /* Editorial quote reads large on touch screens */
-    .editorial-quote__text {
+    /* Daily Focus quote reads large and stays intimate on touch screens */
+    .daily-focus {
+        padding: 20px 16px 22px;
+    }
+    .daily-focus__mark {
+        font-size: 130px;
+        top: -28px;
+        right: 2px;
+    }
+    .daily-focus__text {
         font-size: 19px;
     }
 
